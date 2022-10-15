@@ -1,0 +1,20 @@
+{
+  "name": "backend-superligafifa",
+  "version": "1.0.0",
+  "description": "proyecto integracion de sistemas",
+  "main": "index.js",
+  "scripts": {
+    "start-dev": "nodemon index.js",
+    "start": "node index.js",
+    "test-echo": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "tester"
+  ],
+  "author": "Emilio Martinez",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20"
+  }
+}
