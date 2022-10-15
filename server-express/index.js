@@ -8,8 +8,10 @@ app.use(express.urlencoded({extended: true}))
 // // ROUTES
 // app.use('/users', HERE())
 
-app.get('/test', (req,res)=>{
-    res.send("lets get to work")
+app.get('/status', (req,res)=>{
+  res.json({
+    project: "Proyecto ISTEA: Integracion de Sistemas"
+  });
 })
 
 const port = process.env.PORT || 5000;
