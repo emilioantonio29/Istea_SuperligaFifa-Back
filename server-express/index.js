@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const app = express(); 
 const {routerUsers} = require('./src/1-routes/users/routeUsers');
@@ -9,7 +10,7 @@ app.use(express.urlencoded({extended: true}));
 // DIRECT ENDPOINTS
 app.get('/', (req,res)=>{
   res.json({
-    project: "Proyecto ISTEA: Integracion de Sistemas"
+    project: "Proyecto ISTEA - Backend: Integracion de Sistemas"
   });
 });
 

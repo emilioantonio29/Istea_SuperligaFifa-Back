@@ -2,8 +2,5 @@
   "scripts": {
     "heroku-prebuild": "cd server-express && npm install",
     "start": "cd server-express && npm start"
-  },
-  "dependencies": {
-    "mongoose": "^6.6.5"
   }
 }

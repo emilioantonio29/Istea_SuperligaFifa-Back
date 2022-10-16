@@ -1,2 +1,4 @@
 /node_modules
 /server-express/node_modules
+/.env
+/server-express/.env
