@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const app = express(); 
 const {routerUsers} = require('./src/1-routes/users/routeUsers');
+const {routerPayments} = require('./src/1-routes/payments/routePayments'); 
 
 // MIDDLEWARES
 app.use(express.json());
@@ -16,6 +17,10 @@ app.get('/', (req,res)=>{
 
 // ROUTERS
 app.use('/users', routerUsers());
+
+
+// PAYMENT ROUTERS
+app.use('/payments', routerPayments())
 
 // SERVER 
 const port = process.env.PORT || 5000;
