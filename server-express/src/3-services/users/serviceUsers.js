@@ -16,7 +16,7 @@ const getUserService = async (username, password) =>{
 
     if(data && data.username){
 
-        if(data.password == data.password){
+        if(data.password == password){
             let returnData = {
                 _id: data._id,
                 username: data.username,
@@ -32,7 +32,7 @@ const getUserService = async (username, password) =>{
         }else{
 
             let returnData = {
-                userNotfound: data
+                userNotfound: "userNotfound"
             }
     
             return {notFound: returnData};

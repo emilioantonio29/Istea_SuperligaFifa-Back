@@ -16,8 +16,6 @@ class UserController{
 
         let data = await getUserService(req.body.username, req.body.password)
 
-        console.log(data)
-
         data.user ? res.status(200).json(data) 
         : data.badRequest ? res.status(400).json(data) 
         : data.notFound ? res.status(404).json(data) 

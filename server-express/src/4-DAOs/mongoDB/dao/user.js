@@ -6,6 +6,11 @@ const mongoConnectionNoSingleton = require("../connection/mongoconnection")
 */
 
 const getUserDB = async (username) =>{
+
+    // let data = await mongoConnectionNoSingleton.mongoConnection()
+    // let user = await userMongoaaS.findOne({username: username});
+    // console.log(user)
+    
     let data = await mongoConnectionNoSingleton.mongoConnection()
     .then(() => {
         let user = userMongoaaS.findOne({username: username});
@@ -20,6 +25,7 @@ const getUserDB = async (username) =>{
     })
 
     return data
+    
 }
 
 module.exports= {
