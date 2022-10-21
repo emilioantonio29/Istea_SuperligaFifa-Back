@@ -1,9 +1,12 @@
 require('dotenv').config();
 const express = require("express");
+var cors = require('cors')
 const app = express(); 
 const {routerUsers} = require('./src/1-routes/users/routeUsers');
 
+
 // MIDDLEWARES
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
