@@ -12,7 +12,7 @@ class mongoConnectionNoSingleton{
         - Understanding Mongoose connection options (CONFIG): mongodb://user:pass@sample.host:27017/database?maxPoolSize=20&w=majority
     */
     
-    static stringConnection = process.env.SUPERLIGAFIFA;
+    static stringConnection = process.env.MONGO_URI;
 
     static config = {
             useNewUrlParser: true,
@@ -21,7 +21,12 @@ class mongoConnectionNoSingleton{
     
     static async mongoConnection(){
         try {
-            return await mongoose.connect(mongoConnectionNoSingleton.stringConnection, mongoConnectionNoSingleton.config)
+
+            let uri = await mongoConnectionNoSingleton.stringConnection;
+            let con = await mongoConnectionNoSingleton.config
+
+            return await mongoose.connect(uri, con)
+
         } catch (error) {
             console.log("Error al conectarse a MongoAtlas")
         }
