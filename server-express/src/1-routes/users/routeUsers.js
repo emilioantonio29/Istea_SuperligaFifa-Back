@@ -9,6 +9,7 @@ const routerUsers = () =>{
   routerApi.get('/', UserController.root);
   routerApi.post('/getuser', UserController.getUser);
   routerApi.post('/createuser', UserController.createUser);
+  routerApi.post('/userconfirmation', UserController.createUserConfirmation);
 
   return routerApi;
 
