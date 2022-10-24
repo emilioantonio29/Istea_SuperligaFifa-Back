@@ -1,5 +1,5 @@
 // LAYER 2: CONTROLLER - USERS
-const {getUserService} = require("../../3-services/users/serviceUsers");
+const {getUserService, createUserService} = require("../../3-services/users/serviceUsers");
 const moment = require("moment");
 
 /*
@@ -22,6 +22,13 @@ class UserController{
         : data.error ? res.status(503).json(data) 
         : res.status(500).json(data)
 
+    }
+
+    static createUser = async (req, res) =>{
+
+        let data = await createUserService(req.body);
+
+        res.status(200).json(data);
     }
 
 };

@@ -28,6 +28,26 @@ const getUserDB = async (username) =>{
     
 }
 
+const createUserDB = async (userObject) =>{
+    
+    let data = await mongoConnectionNoSingleton.mongoConnection()
+    .then(() => {
+        let user = userMongoaaS.create(userObject);
+        return user
+    })
+    .catch(err=>{
+        console.log(err)
+        return {error: err}
+    })
+    .finally(() => {
+        mongoConnectionNoSingleton.mongoDisconnect().catch(err => { throw new Error('error al desconectar la base de datos') })
+    })
+
+    return data
+    
+}
+
 module.exports= {
-    getUserDB
+    getUserDB,
+    createUserDB
 }

@@ -16,7 +16,8 @@ const userSchema = new SchemaLocal({
     lastname: {type: String},
     name: {type: String},
     createddate: {type: String}, 
-    tac: {type: Boolean}
+    tac: {type: Boolean},
+    validated: {type: Boolean}
 });
 
 const userMongoaaS = mongoose.model('users', userSchema)

@@ -1,6 +1,6 @@
 // LAYER 3: SERVICE (business layer) - USERS
 
-const {getUserDB} = require("../../4-DAOs/mongoDB/dao/user")
+const {getUserDB, createUserDB} = require("../../4-DAOs/mongoDB/dao/user")
 
 const getUserService = async (username, password) =>{
 
@@ -55,6 +55,16 @@ const getUserService = async (username, password) =>{
     }
 }
 
+const createUserService = async (userObject) =>{
+
+    let data = await createUserDB(userObject);
+
+    console.log(data);
+
+    return data;
+}
+
 module.exports = {
-    getUserService
+    getUserService,
+    createUserService
 }
