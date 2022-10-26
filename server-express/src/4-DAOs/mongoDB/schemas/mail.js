@@ -8,20 +8,17 @@ const SchemaLocal = mongoose.Schema;
     https://www.mongodb.com/developer/languages/javascript/getting-started-with-mongodb-and-mongoose/
 */ 
 
-const userSchema = new SchemaLocal({
+const mailSchema = new SchemaLocal({
     username: {type: String},
-    password: {type: String},
-    admin: {type: Boolean}, 
-    favoriteteam: {type: String}, 
-    lastname: {type: String},
-    name: {type: String},
     createddate: {type: String}, 
-    tac: {type: Boolean},
-    validated: {type: Boolean}
+    type: {type: String}, 
+    body: {type: String},
+    subject: {type: String},
+    sended: {type: Boolean}
 });
 
-const userMongoaaS = mongoose.model('users', userSchema)
+const mailMongoaaS = mongoose.model('mails', mailSchema)
 
 module.exports = {
-    userMongoaaS
+    mailMongoaaS
 }
