@@ -1,5 +1,7 @@
 const nodemailer = require("nodemailer");
 const { registerTemplate } = require("./templates/register");
+const { registerConfirmationTemplate } = require("./templates/registerconfirmation");
+
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -33,4 +35,27 @@ const mailRegister = async (username, name, url) =>{
         })
 }
 
-module.exports = {mailRegister}
+const mailRegisterConfirmation = async (username, name, url) =>{
+
+    let template = await registerConfirmationTemplate(name, url)
+
+    const mailOptions = {
+        from: 'Superliga FIFA',
+        to: `${username}`,
+        subject: 'Superliga FIFA - Cuenta verificada con éxito',
+        html: template
+    }
+
+    transporter.sendMail(mailOptions)
+        .then((data)=>{
+            console.log(data)
+            // res.status(200).json(data);
+            // return 200;
+        }).catch((err)=>{
+            // res.status(500).send(err.message)
+            console.log(err.message)
+            // return 500;
+        })
+}
+
+module.exports = {mailRegister, mailRegisterConfirmation}

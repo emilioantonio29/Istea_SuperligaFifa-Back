@@ -1,8 +1,9 @@
 // LAYER 3: SERVICE (business layer) - USERS
 
-const {getUserDB, createUserDB} = require("../../4-DAOs/mongoDB/dao/user");
+const {getUserDB, createUserDB, userConfirmationDB} = require("../../4-DAOs/mongoDB/dao/user");
 const moment = require("moment");
-const {mailRegister} = require("../mailing/sender");
+const {mailRegister, mailRegisterConfirmation} = require("../mailing/sender");
+const {bcryptHash, bcryptCompare} = require("../bcrypt/bcrypt");
 
 
 const getUserService = async (username, password) =>{
@@ -15,7 +16,7 @@ const getUserService = async (username, password) =>{
         return {badRequest: returnData};
     }
 
-    let data = await getUserDB(username);
+    let data = await getUserDB({username: username});
 
     if(data && data.username){
 
@@ -27,7 +28,9 @@ const getUserService = async (username, password) =>{
             return {notValidated: returnData};
         }
 
-        if(data.password == password){
+        let match = await bcryptCompare(password, data.password);
+
+        if(match){
             let returnData = {
                 _id: data._id,
                 username: data.username,
@@ -68,7 +71,7 @@ const getUserService = async (username, password) =>{
 
 const createUserService = async (userObject) =>{
 
-    if(!userObject.username, !userObject.favoriteteam, !userObject.lastname, !userObject.name, !userObject.tac){
+    if(!userObject.username || !userObject.favoriteteam || !userObject.lastname || !userObject.name || !userObject.tac){
 
         return {badRequest: "Missing data"};
 
@@ -82,10 +85,10 @@ const createUserService = async (userObject) =>{
         userObject.password = await (Math.random() + 1).toString(36).substring(0);
        
         // STEP ONE: try to find it
-        let data = await getUserDB(userObject.username);
+        let data = await getUserDB({username: userObject.username});
         if(data && data.username){
 
-            return {userExists: "User already registerd"};
+            return {userExists: "User already registered"};
 
         }else{
 
@@ -125,7 +128,40 @@ const createUserService = async (userObject) =>{
 }
 
 const createUserConfirmationService = async (userObject) =>{
-    return "data";
+
+    if(!userObject.id || !userObject.password){
+
+        return {badRequest: "Missing data"};
+    }
+
+    let user = await getUserDB({_id: userObject.id});
+
+    if(user && user.validated){
+        return {badRequest: "user already confirmed"};
+    }
+
+    let hashPassword = await bcryptHash(userObject.password);
+
+    let data = await userConfirmationDB(userObject.id, hashPassword);
+
+    if(data && data.modifiedCount > 0){
+
+        let url = `https://superligafifa.herokuapp.com`;
+
+        await mailRegisterConfirmation(user.username, user.name, url)
+        
+        return {confirmationCompleted: "success"};
+
+    }else if(data && data.modifiedCount == 0){
+
+        return {confirmationNotCompleted: "user not found"};
+
+    }else{
+
+        return {error: data}
+
+    }
+
 }
 
 module.exports = {
