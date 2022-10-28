@@ -1,3 +1,7 @@
+const { json } = require("express");
+const axios = require("axios");
+
+
 
 class PaymentController {
     constructor(paymentService) {
@@ -24,13 +28,25 @@ class PaymentController {
         }
     }
 
-    webhook(req, res) {
+    getPaymentConfirmation = async (payment_id) => {
+        try {
+            const resp = await axios.get(`https://api.mercadopago.com/v1/payments/${payment_id}`, {
+                headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${process.env.ACCESS_TOKEN_MP_DEV}`
+                        }
+            });
+
+            return resp.data
+        } catch (err) {
+            // Handle Error Here
+            console.error(err);
+        }
+    };
+
+    async webhook(req, res) {
         if (req.method === "POST") {
             let body = "";
-            
-            console.log(req.query);
-            //ejemplo { id: '6215978987', topic: 'merchant_order' }
-            
             req.on("data", (chunk) => {
                 console.log("CHUNK ES: ", chunk)
                 body += chunk.toString();
@@ -38,22 +54,50 @@ class PaymentController {
             req.on("end", () => {
                 res.end("ok");
             });
-            // if req.body['action'] == "payment.created" ... buscar por merchant_order, data.id 
-            //req.body ========================================
-                // body: {
-                //     action: 'payment.created',
-                //     api_version: 'v1',
-                //     data: { id: '1309207343' },
-                //     date_created: '2022-10-20T20:56:59Z',
-                //     id: 103598719214,
-                //     live_mode: false,
-                //     type: 'payment',
-                //     user_id: '1214224897'
+            if ('type' in req.query && req.query['type'] == "payment") {
+                console.log("Webhook recibido...")
+                console.log()
+
+                let payment_id = req.body['data']['id']
+                
+                console.log("Se recibio notificacion de Pago con ID:")
+                console.log(payment_id)
+                console.log()
+
+                //chequeo y confirmo si pago se realizó
+                const payment_found = await this.getPaymentConfirmation(payment_id)
+
+                // Acá se busca el usuario con el email asignado al pago y se actualiza el campo 'admin' a True
+                // Accedo diretamente a DAO?? O armo un servicio para ello?
+                // Ver a quien y de donde llamo para hacer este update del user?
+                // if (payment_status == "approved" && transaction_detail == "accredited"){
+                //     let data = await updateAdminUserDB(payer.email)
+                //     console.log(data)
                 // }
-            // if req.body['action'] == "payment.updated" ...
-            // falta ver bien como los identificamos y guardamos el tema transacciones
-            // mas complejo d elo que pensaba
-            console.log(req)
+
+                //
+
+                console.log("Payment ID encontrado: ...")
+                console.log(payment_found.id)
+                console.log()
+                console.log("Para el usuario con email: ...")
+                console.log(payment_found.payer.email)
+                console.log()
+                console.log("Payment status: ...")
+                console.log(payment_found.status)
+                console.log()
+                console.log("Payment transaction detail: ...")
+                console.log(payment_found.status_detail)
+                
+                
+
+
+            }   else {
+                console.log("Merchant Order")
+                console.log(req.query)
+                console.log()
+            }
+
         }
         res.sendStatus(200);
         
