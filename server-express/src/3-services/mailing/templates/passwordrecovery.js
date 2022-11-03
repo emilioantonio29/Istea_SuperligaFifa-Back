@@ -1,4 +1,4 @@
-const registerConfirmationTemplate = async (name, url) => {
+const passwordRecoveryTemplate = async (name, url) => {
 
     let template = await `<html>
                             <body>
@@ -24,7 +24,7 @@ const registerConfirmationTemplate = async (name, url) => {
                                                                 style='width:100%;border-collapse:collapse;border:0;border-spacing:0;'>
                                                                 <tr>
                                                                     <td style='padding:0 0 0px 0;color:#153643;'>
-                                                                        <h2 style="text-align: center;">Gracias por verificar tu cuenta</h2>
+                                                                        <h2 style="text-align: center;">Solicitud de cambio de contraseña</h2>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -34,11 +34,11 @@ const registerConfirmationTemplate = async (name, url) => {
                                                                             <tr>
                                                                                 <td style='width:260px;padding:0;vertical-align:top;color:#153643;'>
                                                                                     <p style='margin:0 0 12px 0;font-size:16px;line-height:22px;font-family:Arial,sans-serif;'>
-                                                                                        Hola ${name}, ya puedes iniciar sesión en nuestro portal:
+                                                                                        Hola ${name}, haciendo click en el siguiente link podrás cambiar tu contraseña:
                                                                                     </p>
                                                                                     <p>
                                                                                         <a style="text-decoration: none; color: rgb(142, 96, 142);" href="${url}" 
-                                                                                        class="btn btn-primary">Superliga Fifa</a>
+                                                                                        class="btn btn-primary">Cambiar contraseña</a>
                                                                                     </p>
                                                                                 </td>
                                                                                 <td style='width:20px;padding:0;font-size:0;line-height:0;'>&nbsp;</td>
@@ -82,4 +82,4 @@ const registerConfirmationTemplate = async (name, url) => {
 }
 
 
-module.exports = {registerConfirmationTemplate}
+module.exports = {passwordRecoveryTemplate}

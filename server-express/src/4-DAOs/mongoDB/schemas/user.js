@@ -17,7 +17,10 @@ const userSchema = new SchemaLocal({
     name: {type: String},
     createddate: {type: String}, 
     tac: {type: Boolean},
-    validated: {type: Boolean}
+    validated: {type: Boolean},
+    passwordrecoverytoken: {type: String},
+    passwordrecoverycreateddate: {type: Date},
+    passwordrecoveryused: {type: Boolean}
 });
 
 const userMongoaaS = mongoose.model('users', userSchema)

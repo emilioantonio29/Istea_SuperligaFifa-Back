@@ -1,8 +1,8 @@
 // LAYER 3: SERVICE (business layer) - USERS
 
-const {getUserDB, createUserDB, userConfirmationDB} = require("../../4-DAOs/mongoDB/dao/user");
+const {getUserDB, createUserDB, userConfirmationDB, userUpdatenDB} = require("../../4-DAOs/mongoDB/dao/user");
 const moment = require("moment");
-const {mailRegister, mailRegisterConfirmation} = require("../mailing/sender");
+const {mailRegister, mailRegisterConfirmation, mailPasswordRecovery} = require("../mailing/sender");
 const {bcryptHash, bcryptCompare} = require("../bcrypt/bcrypt");
 
 
@@ -83,6 +83,9 @@ const createUserService = async (userObject) =>{
         userObject.admin = false;
         userObject.validated = false;
         userObject.password = await (Math.random() + 1).toString(36).substring(0);
+        userObject.passwordrecoverytoken = "";
+        userObject.passwordrecoverycreateddate = new Date().getTime();
+        userObject.passwordrecoveryused = true;
        
         // STEP ONE: try to find it
         let data = await getUserDB({username: userObject.username});
@@ -164,8 +167,54 @@ const createUserConfirmationService = async (userObject) =>{
 
 }
 
+const passwordRecoveryService = async (username) =>{
+
+    if(!username){
+
+        return {badRequest: "Missing data"};
+    }
+
+    try {
+        
+        let filterObject = {username: username};
+        let updateObject = {
+            passwordrecoverytoken: Math.random().toString(36),
+            passwordrecoverycreateddate: new Date().getTime()+5*60000,
+            passwordrecoveryused: false
+
+        };
+
+        let data = await userUpdatenDB(filterObject, updateObject);
+
+        if(data && data.username){
+
+            let url = `https://superligafifa.herokuapp.com/passwordrecovery?id=${data._id}&token=${updateObject.passwordrecoverytoken}&user=${data.username}`;
+    
+            await mailPasswordRecovery(data.username, data.name, url)
+            
+            return {passwordRecoveryCompleted: "success"};
+    
+        }else if(data === null){
+    
+            return {confirmationNotCompleted: "user not found"};
+    
+        }else{
+    
+            return {error: data}
+    
+        }
+
+    } catch (error) {
+
+        return {error: error};
+        
+    }
+
+}
+
 module.exports = {
     getUserService,
     createUserService,
-    createUserConfirmationService
+    createUserConfirmationService,
+    passwordRecoveryService
 }

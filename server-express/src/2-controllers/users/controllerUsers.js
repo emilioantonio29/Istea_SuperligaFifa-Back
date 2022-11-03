@@ -1,5 +1,5 @@
 // LAYER 2: CONTROLLER - USERS
-const {getUserService, createUserService, createUserConfirmationService} = require("../../3-services/users/serviceUsers");
+const {getUserService, createUserService, createUserConfirmationService, passwordRecoveryService} = require("../../3-services/users/serviceUsers");
 const moment = require("moment");
 
 /*
@@ -42,6 +42,18 @@ class UserController{
         let data = await createUserConfirmationService(req.body);
 
         data.confirmationCompleted ? res.status(200).json(data) 
+        : data.badRequest ? res.status(400).json(data)
+        : data.confirmationNotCompleted ? res.status(404).json(data)
+        : data.error ? res.status(503).json(data) 
+        : res.status(500).json(data)
+
+    }
+
+    static createPasswordRecovery = async (req, res) =>{
+
+        let data = await passwordRecoveryService(req.body.username);
+
+        data.passwordRecoveryCompleted ? res.status(200).json(data) 
         : data.badRequest ? res.status(400).json(data)
         : data.confirmationNotCompleted ? res.status(404).json(data)
         : data.error ? res.status(503).json(data) 

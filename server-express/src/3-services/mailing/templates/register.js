@@ -36,8 +36,8 @@ const registerTemplate = async (name, url) => {
                                                                                     <p style='margin:0 0 12px 0;font-size:16px;line-height:22px;font-family:Arial,sans-serif;'>
                                                                                         Hola ${name}, haciendo click en el siguiente link podrás completar tu registro:
                                                                                     </p>
-                                                                                    <p style="text-align: center;">
-                                                                                        <a style="text-decoration: none; color: rgb(142, 96, 142); text-align: center;" href="${url}" 
+                                                                                    <p>
+                                                                                        <a style="text-decoration: none; color: rgb(142, 96, 142);" href="${url}" 
                                                                                         class="btn btn-primary">Confirmar registro</a>
                                                                                     </p>
                                                                                 </td>

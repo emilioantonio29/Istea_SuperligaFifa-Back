@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const { registerTemplate } = require("./templates/register");
 const { registerConfirmationTemplate } = require("./templates/registerconfirmation");
+const { passwordRecoveryTemplate } = require("./templates/passwordrecovery")
 
 
 const transporter = nodemailer.createTransport({
@@ -58,4 +59,27 @@ const mailRegisterConfirmation = async (username, name, url) =>{
         })
 }
 
-module.exports = {mailRegister, mailRegisterConfirmation}
+const mailPasswordRecovery = async (username, name, url) =>{
+
+    let template = await passwordRecoveryTemplate(name, url)
+
+    const mailOptions = {
+        from: 'Superliga FIFA',
+        to: `${username}`,
+        subject: 'Superliga FIFA - Solicitud de cambio de contraseña',
+        html: template
+    }
+
+    transporter.sendMail(mailOptions)
+        .then((data)=>{
+            console.log(data)
+            // res.status(200).json(data);
+            // return 200;
+        }).catch((err)=>{
+            // res.status(500).send(err.message)
+            console.log(err.message)
+            // return 500;
+        })
+}
+
+module.exports = {mailRegister, mailRegisterConfirmation, mailPasswordRecovery}

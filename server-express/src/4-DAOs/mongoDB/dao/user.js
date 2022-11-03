@@ -70,8 +70,32 @@ const userConfirmationDB = async (id, password) =>{
 
 }
 
+const userUpdatenDB = async (filterObject, updateObject) =>{
+
+    let data = await mongoConnectionNoSingleton.mongoConnection()
+        .then(()=>{
+            let user = userMongoaaS.findOneAndUpdate(
+                filterObject,
+                { $set: updateObject },
+            )
+
+            return user;
+        })
+        .catch(err=>{
+            console.log(err)
+            return {error: err}
+        })
+        .finally(() => {
+            mongoConnectionNoSingleton.mongoDisconnect().catch(err => { throw new Error('error al desconectar la base de datos') })
+        })
+
+    return data;
+
+}
+
 module.exports= {
     getUserDB,
     createUserDB,
-    userConfirmationDB
+    userConfirmationDB,
+    userUpdatenDB
 }
