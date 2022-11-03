@@ -1,4 +1,4 @@
-const passwordRecoveryTemplate = async (name, url) => {
+const passwordRecoveryConfirmationTemplate = async (name, url) => {
 
     let template = await `<html>
                             <body>
@@ -24,7 +24,7 @@ const passwordRecoveryTemplate = async (name, url) => {
                                                                 style='width:100%;border-collapse:collapse;border:0;border-spacing:0;'>
                                                                 <tr>
                                                                     <td style='padding:0 0 0px 0;color:#153643;'>
-                                                                        <h2 style="text-align: center;">Solicitud de cambio de contraseña</h2>
+                                                                        <h2 style="text-align: center;">Cambio de contraseña exitoso</h2>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -34,14 +34,11 @@ const passwordRecoveryTemplate = async (name, url) => {
                                                                             <tr>
                                                                                 <td style='width:260px;padding:0;vertical-align:top;color:#153643;'>
                                                                                     <p style='margin:0 0 12px 0;font-size:16px;line-height:22px;font-family:Arial,sans-serif;'>
-                                                                                        Hola ${name}, haciendo click en el siguiente link podrás cambiar tu contraseña:
+                                                                                        Hola ${name}, tu cambio de contraseña fue procesado con éxito, ya puedes iniciar sesión en nuestro portal:
                                                                                     </p>
                                                                                     <p>
                                                                                         <a style="text-decoration: none; color: rgb(142, 96, 142);" href="${url}" 
-                                                                                        class="btn btn-primary">Cambiar contraseña</a>
-                                                                                    </p>
-                                                                                    <p style='margin:0 0 12px 0;font-size:16px;line-height:22px;font-family:Arial,sans-serif;'>
-                                                                                        • El link tiene una duración de 10 minutos.
+                                                                                        class="btn btn-primary">Superliga FIFA</a>
                                                                                     </p>
                                                                                 </td>
                                                                                 <td style='width:20px;padding:0;font-size:0;line-height:0;'>&nbsp;</td>
@@ -85,4 +82,4 @@ const passwordRecoveryTemplate = async (name, url) => {
 }
 
 
-module.exports = {passwordRecoveryTemplate}
+module.exports = {passwordRecoveryConfirmationTemplate}

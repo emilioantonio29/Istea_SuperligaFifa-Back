@@ -1,8 +1,8 @@
 // LAYER 3: SERVICE (business layer) - USERS
 
-const {getUserDB, createUserDB, userConfirmationDB, userUpdatenDB} = require("../../4-DAOs/mongoDB/dao/user");
+const {getUserDB, createUserDB, userConfirmationDB, userUpdateDB} = require("../../4-DAOs/mongoDB/dao/user");
 const moment = require("moment");
-const {mailRegister, mailRegisterConfirmation, mailPasswordRecovery} = require("../mailing/sender");
+const {mailRegister, mailRegisterConfirmation, mailPasswordRecovery, mailPasswordRecoveryConfirmation} = require("../mailing/sender");
 const {bcryptHash, bcryptCompare} = require("../bcrypt/bcrypt");
 
 
@@ -179,20 +179,27 @@ const passwordRecoveryService = async (username) =>{
         let filterObject = {username: username};
         let updateObject = {
             passwordrecoverytoken: Math.random().toString(36),
-            passwordrecoverycreateddate: new Date().getTime()+5*60000,
+            passwordrecoverycreateddate: new Date().getTime()+10*60000,
             passwordrecoveryused: false
 
         };
 
-        let data = await userUpdatenDB(filterObject, updateObject);
+        let data = await userUpdateDB(filterObject, updateObject);
 
         if(data && data.username){
 
-            let url = `https://superligafifa.herokuapp.com/passwordrecovery?id=${data._id}&token=${updateObject.passwordrecoverytoken}&user=${data.username}`;
-    
-            await mailPasswordRecovery(data.username, data.name, url)
-            
-            return {passwordRecoveryCompleted: "success"};
+            if(data.validated){
+                
+                let url = `https://superligafifa.herokuapp.com/passwordrecovery?token=${updateObject.passwordrecoverytoken}&user=${data.username}`;
+        
+                await mailPasswordRecovery(data.username, data.name, url)
+                
+                return {passwordRecoveryCompleted: "success"};
+
+            }else{
+                return {userNotValidated: "user not validated"};
+            }
+
     
         }else if(data === null){
     
@@ -212,9 +219,85 @@ const passwordRecoveryService = async (username) =>{
 
 }
 
+const passwordRecoveryConfirmationService = async (userObject) =>{
+
+    if(!userObject.username || !userObject.token || !userObject.password){
+
+        return {badRequest: "Missing data"};
+    }
+
+    try {
+
+        let date = new Date().getTime();
+
+        let data = await getUserDB({username: userObject.username});
+
+        if(data && data.username){
+
+            if(data.validated == false){
+
+                return {userNotValidated: "user not validated"};
+
+            }else if(data.passwordrecoveryused == false && data.passwordrecoverycreateddate > date && userObject.token == data.passwordrecoverytoken){
+
+                console.log("test")
+
+                let filterObject = {username: data.username};
+                let updateObject = {
+                    passwordrecoveryused: true,
+                    password: userObject.password
+                };
+
+                let user = await userUpdateDB(filterObject, updateObject);
+
+                console.log("data", user)
+
+                if(user && user.username){
+
+                    let url = `https://superligafifa.herokuapp.com`;
+            
+                    await mailPasswordRecoveryConfirmation(data.username, data.name, url)
+                    
+                    return {passwordRecoveryConfirmationCompleted: "success"};
+            
+                }else{
+            
+                    return {error: data}
+            
+                }
+
+            }else{
+
+                return {invalidToken: "invalid token or already used"};
+
+            }
+
+        }else if(data === null){
+    
+            return {userNotfound: "user not found"};
+    
+        }else{
+    
+            return {error: data}
+    
+        }
+
+        
+    } catch (error) {
+
+        return {error: error};
+
+    }
+
+
+}
+
+
+
 module.exports = {
     getUserService,
     createUserService,
     createUserConfirmationService,
-    passwordRecoveryService
+    passwordRecoveryService,
+    passwordRecoveryConfirmationService
 }

@@ -19,7 +19,7 @@ const userSchema = new SchemaLocal({
     tac: {type: Boolean},
     validated: {type: Boolean},
     passwordrecoverytoken: {type: String},
-    passwordrecoverycreateddate: {type: Date},
+    passwordrecoverycreateddate: {type: Number},
     passwordrecoveryused: {type: Boolean}
 });
 

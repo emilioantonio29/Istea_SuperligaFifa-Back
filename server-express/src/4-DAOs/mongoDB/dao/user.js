@@ -70,7 +70,7 @@ const userConfirmationDB = async (id, password) =>{
 
 }
 
-const userUpdatenDB = async (filterObject, updateObject) =>{
+const userUpdateDB = async (filterObject, updateObject) =>{
 
     let data = await mongoConnectionNoSingleton.mongoConnection()
         .then(()=>{
@@ -97,5 +97,5 @@ module.exports= {
     getUserDB,
     createUserDB,
     userConfirmationDB,
-    userUpdatenDB
+    userUpdateDB
 }
