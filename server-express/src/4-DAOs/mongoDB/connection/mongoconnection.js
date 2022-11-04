@@ -29,6 +29,7 @@ class mongoConnectionNoSingleton{
 
         } catch (error) {
             console.log("Error al conectarse a MongoAtlas")
+            console.log(error)
         }
     }
 
