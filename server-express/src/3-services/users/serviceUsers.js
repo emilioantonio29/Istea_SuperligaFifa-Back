@@ -99,7 +99,7 @@ const createUserService = async (userObject) =>{
 
             if(data && data.username){
 
-                let url = `https://superligafifa.herokuapp.com/register?id=${data._id}`;
+                let url = `https://superligafifa.herokuapp.com/register?id=${data._id}&user=${data.username}`;
 
                 await mailRegister(data.username, data.name, url);
 
@@ -132,38 +132,49 @@ const createUserService = async (userObject) =>{
 
 const createUserConfirmationService = async (userObject) =>{
 
-    if(!userObject.id || !userObject.password){
+    if(!userObject.id || !userObject.password || !userObject.email){
 
         return {badRequest: "Missing data"};
     }
 
-    let user = await getUserDB({_id: userObject.id});
+    try {
 
-    if(user && user.validated){
-        return {badRequest: "user already confirmed"};
-    }
+        let user = await getUserDB({_id: userObject.id});
+    
+        if(user && user.username !== userObject.email){
+            return {badRequest: "id or user invalid"};
+        }
+    
+        if(user && user.validated){
+            return {badRequest: "user already confirmed"};
+        }
+    
+        let hashPassword = await bcryptHash(userObject.password);
+    
+        let data = await userConfirmationDB(userObject.id, hashPassword);
+    
+        if(data && data.modifiedCount > 0){
+    
+            let url = `https://superligafifa.herokuapp.com`;
+    
+            await mailRegisterConfirmation(user.username, user.name, url)
+            
+            return {confirmationCompleted: "success"};
+    
+        }else if(data && data.modifiedCount == 0){
+    
+            return {confirmationNotCompleted: "user not found"};
+    
+        }else{
+    
+            return {error: data}
+    
+        }
 
-    let hashPassword = await bcryptHash(userObject.password);
-
-    let data = await userConfirmationDB(userObject.id, hashPassword);
-
-    if(data && data.modifiedCount > 0){
-
-        let url = `https://superligafifa.herokuapp.com`;
-
-        await mailRegisterConfirmation(user.username, user.name, url)
-        
-        return {confirmationCompleted: "success"};
-
-    }else if(data && data.modifiedCount == 0){
-
-        return {confirmationNotCompleted: "user not found"};
-
-    }else{
-
+    } catch (error) {
         return {error: data}
-
     }
+
 
 }
 
