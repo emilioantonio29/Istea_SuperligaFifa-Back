@@ -35,8 +35,8 @@ class PaymentService {
                 name: "Rodolfo",
                 surname: "Arruabarrena",
                 // para demo/sandbox usar mail de un usuario comprador de prueba para esa integracion sino falla
-                // en prod pasar el parametro email que recibe la funcion, funciona sin problema
-                email: `${process.env.COMPRADOR_DE_PRUEBA_MP}`,
+                // en prod de MP pasar el parametro email que recibe la funcion, funciona sin problema
+                email: email,
                 phone: {
                     area_code: "11",
                     number: "22223333"

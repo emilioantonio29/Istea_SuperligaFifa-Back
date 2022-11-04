@@ -1,5 +1,6 @@
 const { json } = require("express");
 const axios = require("axios");
+const { userUpdateDB, getUserDB } = require("../../4-DAOs/mongoDB/dao/user");
 
 
 
@@ -56,40 +57,35 @@ class PaymentController {
             });
             if ('type' in req.query && req.query['type'] == "payment") {
                 console.log("Webhook recibido...")
-                console.log()
 
                 let payment_id = req.body['data']['id']
                 
-                console.log("Se recibio notificacion de Pago con ID:")
-                console.log(payment_id)
-                console.log()
+                console.log("Se recibio notificacion de Pago con ID:", payment_id)
 
                 //chequeo y confirmo si pago se realizó
                 const payment_found = await this.getPaymentConfirmation(payment_id)
 
                 // Acá se busca el usuario con el email asignado al pago y se actualiza el campo 'admin' a True
-                // Accedo diretamente a DAO?? O armo un servicio para ello?
-                // Ver a quien y de donde llamo para hacer este update del user?
-                // if (payment_status == "approved" && transaction_detail == "accredited"){
-                //     let data = await updateAdminUserDB(payer.email)
-                //     console.log(data)
-                // }
-
-                //
-
-                console.log("Payment ID encontrado: ...")
-                console.log(payment_found.id)
-                console.log()
-                console.log("Para el usuario con email: ...")
-                console.log(payment_found.payer.email)
-                console.log()
-                console.log("Payment status: ...")
-                console.log(payment_found.status)
-                console.log()
-                console.log("Payment transaction detail: ...")
-                console.log(payment_found.status_detail)
-                
-                
+                if (payment_found.status == "approved" && payment_found.status_detail == "accredited"){
+    
+                    // solo para demo ---ANTES del Usuario
+                    let user_before_payment = await getUserDB({username: payment_found.payer.email});
+                    console.log("user_before_payment", user_before_payment)
+                    console.log()
+    
+                    let filterObject = {username: payment_found.payer.email};
+                    let updateObject = {
+                        admin: true
+                    };
+    
+                    await userUpdateDB(filterObject, updateObject);
+                    
+                    // solo para demo ---DESPUES del Usuario
+                    let user_after_payment = await getUserDB({username: payment_found.payer.email});
+                    console.log("user_after_payment", user_after_payment)
+                    console.log()
+                }
+                                
 
 
             }   else {
