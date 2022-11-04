@@ -251,12 +251,12 @@ const passwordRecoveryConfirmationService = async (userObject) =>{
 
             }else if(data.passwordrecoveryused == false && data.passwordrecoverycreateddate > date && userObject.token == data.passwordrecoverytoken){
 
-                console.log("test")
+                let hashPassword = await bcryptHash(userObject.password);
 
                 let filterObject = {username: data.username};
                 let updateObject = {
                     passwordrecoveryused: true,
-                    password: userObject.password
+                    password: hashPassword
                 };
 
                 let user = await userUpdateDB(filterObject, updateObject);
