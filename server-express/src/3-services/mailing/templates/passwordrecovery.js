@@ -24,7 +24,7 @@ const passwordRecoveryTemplate = async (name, url) => {
                                                                 style='width:100%;border-collapse:collapse;border:0;border-spacing:0;'>
                                                                 <tr>
                                                                     <td style='padding:0 0 0px 0;color:#153643;'>
-                                                                        <h2 style="text-align: center;">Solicitud de cambio de contraseña</h2>
+                                                                        <h2 style="text-align: center; color: rgb(184, 140, 184);">Solicitud de cambio de contraseña</h2>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -62,7 +62,7 @@ const passwordRecoveryTemplate = async (name, url) => {
                                                                             style='border-collapse:collapse;border:0;border-spacing:0;'>
                                                                             <tr>
                                                                                 <td class="bg_light" style="text-align: center;">
-                                                                                    <p style="color: white">Powered by Superliga Fifa<a href="#"
+                                                                                    <p style="color: white; font-size:16px;">Powered by Superliga Fifa<a href="#"
                                                                                             style="color: rgba(255, 255, 255, 0.8);"></a></p>
                                                                                 </td>
                                                                             </tr>

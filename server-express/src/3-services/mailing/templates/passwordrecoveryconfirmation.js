@@ -24,7 +24,7 @@ const passwordRecoveryConfirmationTemplate = async (name, url) => {
                                                                 style='width:100%;border-collapse:collapse;border:0;border-spacing:0;'>
                                                                 <tr>
                                                                     <td style='padding:0 0 0px 0;color:#153643;'>
-                                                                        <h2 style="text-align: center;">Cambio de contraseña exitoso</h2>
+                                                                        <h2 style="text-align: center; color: rgb(184, 140, 184);">Cambio de contraseña exitoso</h2>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -59,8 +59,8 @@ const passwordRecoveryConfirmationTemplate = async (name, url) => {
                                                                             style='border-collapse:collapse;border:0;border-spacing:0;'>
                                                                             <tr>
                                                                                 <td class="bg_light" style="text-align: center;">
-                                                                                    <p style="color: white">Powered by Superliga Fifa<a href="#"
-                                                                                            style="color: rgba(255, 255, 255, 0.8);"></a></p>
+                                                                                    <p style="color: white; font-size:16px;">Powered by Superliga Fifa<a href="#"
+                                                                                        style="color: rgba(255, 255, 255, 0.8);"></a></p>
                                                                                 </td>
                                                                             </tr>
                                                                         </table>
