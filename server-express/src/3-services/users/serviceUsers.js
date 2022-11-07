@@ -4,6 +4,7 @@ const {getUserDB, createUserDB, userConfirmationDB, userUpdateDB} = require("../
 const moment = require("moment");
 const {mailRegister, mailRegisterConfirmation, mailPasswordRecovery, mailPasswordRecoveryConfirmation} = require("../mailing/sender");
 const {bcryptHash, bcryptCompare} = require("../bcrypt/bcrypt");
+const Encrypter = require("../encryption/encrypter");
 
 
 const getUserService = async (username, password) =>{
@@ -16,57 +17,155 @@ const getUserService = async (username, password) =>{
         return {badRequest: returnData};
     }
 
-    let data = await getUserDB({username: username});
+    try {
 
-    if(data && data.username){
-
-        if(data.validated == false){
-            let returnData = {
-                userNotValidated: "userNotValidated"
+        let data = await getUserDB({username: username});
+    
+        if(data && data.username){
+    
+            if(data.validated == false){
+                let returnData = {
+                    userNotValidated: "userNotValidated"
+                }
+        
+                return {notValidated: returnData};
             }
     
-            return {notValidated: returnData};
-        }
-
-        let match = await bcryptCompare(password, data.password);
-
-        if(match){
-            let returnData = {
-                _id: data._id,
-                username: data.username,
-                admin: data.admin,
-                favoriteteam: data.favoriteteam,
-                lastname: data.lastname,
-                name: data.name,
-                createddate: data.createddate,
-                tac: data.tac
-              }
+            let match = await bcryptCompare(password, data.password);
     
-            return {user: returnData};
-        }else{
+            if(match){
+                let returnData = {
+                    _id: data._id,
+                    username: data.username,
+                    admin: data.admin,
+                    favoriteteam: data.favoriteteam,
+                    lastname: data.lastname,
+                    name: data.name,
+                    createddate: data.createddate,
+                    tac: data.tac
+                }
+                
+                const encrypter = new Encrypter(process.env.ENCRYPTIONKEY);
 
+                let encryptedSession = {
+                    user: returnData,
+                    expired: new Date().getTime()+60*60000
+                }
+
+                let encryptedData = await encrypter.encrypt(JSON.stringify(encryptedSession));
+
+                return {user: {
+                    user: returnData,
+                    session: encryptedData
+                }};
+
+            }else{
+    
+                let returnData = {
+                    userNotfound: "userNotfound"
+                }
+        
+                return {notFound: returnData};
+                
+            }
+    
+    
+        }else if(data === null){
+    
             let returnData = {
-                userNotfound: "userNotfound"
+                userNotfound: data
             }
     
             return {notFound: returnData};
-            
+    
+        }else{
+    
+            return {error: data};
+    
         }
+   
+    } catch (error) {
 
+        return {error: error};
+        
+    }
 
-    }else if(data === null){
+}
 
-        let returnData = {
-            userNotfound: data
-        }
+const getUserBySessionService = async(token) =>{
 
-        return {notFound: returnData};
+    if(!token){
 
-    }else{
-
-        return data
+        return {badRequest: "Missing data"};
 
     }
+
+    try {
+
+        const encrypter = new Encrypter(process.env.ENCRYPTIONKEY);
+        const dencrypted = encrypter.dencrypt(token);
+        const userObject = JSON.parse(dencrypted);
+
+        if(userObject.user && userObject.expired > new Date().getTime()){
+            
+            let data = await getUserDB({username: userObject.user.username});
+
+            if(data && data.username){
+    
+                if(data.validated == false){
+                    let returnData = {
+                        userNotValidated: "userNotValidated"
+                    }
+            
+                    return {notValidated: returnData};
+                }
+
+                let returnData = {
+                    _id: data._id,
+                    username: data.username,
+                    admin: data.admin,
+                    favoriteteam: data.favoriteteam,
+                    lastname: data.lastname,
+                    name: data.name,
+                    createddate: data.createddate,
+                    tac: data.tac
+                }
+                
+                const encrypter = new Encrypter(process.env.ENCRYPTIONKEY);
+
+                let encryptedSession = {
+                    user: returnData,
+                    expired: new Date().getTime()+60*60000
+                }
+
+                let encryptedData = await encrypter.encrypt(JSON.stringify(encryptedSession));
+
+                return {user: {
+                    user: returnData,
+                    session: encryptedData
+                }};
+
+            }else{
+
+                return {error: data};
+
+            }
+
+
+        }else{
+
+            return {expired: "Your session has expired"}
+
+        }
+        
+    } catch (error) {
+
+        return {unauthorized: error}
+
+    }
+
+
+
 }
 
 const createUserService = async (userObject) =>{
@@ -310,5 +409,6 @@ module.exports = {
     createUserService,
     createUserConfirmationService,
     passwordRecoveryService,
-    passwordRecoveryConfirmationService
+    passwordRecoveryConfirmationService,
+    getUserBySessionService
 }
