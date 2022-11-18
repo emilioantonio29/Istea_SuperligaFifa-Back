@@ -4,6 +4,7 @@ var cors = require('cors')
 const app = express(); 
 const {routerUsers} = require('./src/1-routes/users/routeUsers');
 const {routerPayments} = require('./src/1-routes/payments/routePayments'); 
+const { routerTournaments } = require('./src/1-routes/tournaments/routeTournaments');
 
 
 // MIDDLEWARES
@@ -24,6 +25,9 @@ app.use('/users', routerUsers());
 
 // PAYMENT ROUTERS
 app.use('/payments', routerPayments())
+
+// TOURNAMENTS ROUTERS
+app.use('/tournaments', routerTournaments())
 
 // SERVER 
 const port = process.env.PORT || 5000;
