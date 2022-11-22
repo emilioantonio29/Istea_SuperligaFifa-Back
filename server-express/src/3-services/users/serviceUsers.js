@@ -6,6 +6,70 @@ const {mailRegister, mailRegisterConfirmation, mailPasswordRecovery, mailPasswor
 const {bcryptHash, bcryptCompare} = require("../bcrypt/bcrypt");
 const Encrypter = require("../encryption/encrypter");
 
+const validateUser = async (token) =>{
+    try {
+
+        const encrypter = new Encrypter(process.env.ENCRYPTIONKEY);
+        const dencrypted = encrypter.dencrypt(token);
+        const userObject = JSON.parse(dencrypted);
+
+        if(userObject.user && userObject.expired > new Date().getTime()){
+            
+            let data = await getUserDB({username: userObject.user.username});
+
+            if(data && data.username){
+    
+                if(data.validated == false){
+                    let returnData = {
+                        userNotValidated: "userNotValidated"
+                    }
+            
+                    return {notValidated: returnData};
+                }
+
+                let returnData = {
+                    _id: data._id,
+                    username: data.username,
+                    admin: data.admin,
+                    favoriteteam: data.favoriteteam,
+                    lastname: data.lastname,
+                    name: data.name,
+                    createddate: data.createddate,
+                    tac: data.tac
+                }
+                
+                const encrypter = new Encrypter(process.env.ENCRYPTIONKEY);
+
+                let encryptedSession = {
+                    user: returnData,
+                    expired: new Date().getTime()+60*60000
+                }
+
+                let encryptedData = await encrypter.encrypt(JSON.stringify(encryptedSession));
+
+                return {user: {
+                    user: returnData,
+                    session: encryptedData
+                }};
+
+            }else{
+
+                return {error: data};
+
+            }
+
+        }else{
+
+            return {expired: "Your session has expired"}
+
+        }
+        
+    } catch (error) {
+
+        return {unauthorized: error}
+
+    }
+}
 
 const getUserService = async (username, password) =>{
 
@@ -410,5 +474,6 @@ module.exports = {
     createUserConfirmationService,
     passwordRecoveryService,
     passwordRecoveryConfirmationService,
-    getUserBySessionService
+    getUserBySessionService,
+    validateUser
 }

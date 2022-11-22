@@ -7,6 +7,7 @@ const routerUsers = () =>{
   const routerApi = express.Router();
 
   routerApi.get('/', UserController.root);
+  routerApi.post('/', UserController.rootPost);
   routerApi.post('/getuser', UserController.getUser);
   routerApi.post('/getusersession', UserController.getUserSession);
   routerApi.post('/createuser', UserController.createUser);

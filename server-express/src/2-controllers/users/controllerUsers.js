@@ -18,6 +18,14 @@ class UserController{
         res.status(200).json({welcome:`${moment(new Date()).format("DD/MM/YYYY")} - USER CONTROLLER`});      
     }
 
+    static rootPost = (req, res) =>{
+
+        console.log("================================================================")
+        console.log(req.body)
+
+        res.status(200).json({welcome:`${moment(new Date()).format("DD/MM/YYYY")} - USER CONTROLLER`});      
+    }
+
     static getUser = async (req, res) =>{
 
         let data = await getUserService(req.body.username, req.body.password)

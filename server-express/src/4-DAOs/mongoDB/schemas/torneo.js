@@ -9,6 +9,8 @@ const { fechaSchema } = require("./fecha");
     https://www.mongodb.com/developer/languages/javascript/getting-started-with-mongodb-and-mongoose/
 */ 
 
+// PASO 2
+
 const torneoSchema = new SchemaLocal({
     fechas: {type: [fechaSchema]},
     name: {type: String},
@@ -18,6 +20,22 @@ const torneoSchema = new SchemaLocal({
 
 const torneoMongoaaS = mongoose.model('torneos', torneoSchema)
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// PASO 1
+
+const torneoRegisterSchema = new SchemaLocal({
+    cantidadjugadores: {type: Number},
+    torneoid: {type: String},
+    owner: {type: String},
+    jugadores: {type: Array},
+    liga: {type: String},
+    estado: {type: Boolean}
+});
+
+const torneoRegisterMongoaaS = mongoose.model('torneoregisters', torneoRegisterSchema)
+
 module.exports = {
-    torneoMongoaaS
+    torneoMongoaaS,
+    torneoRegisterMongoaaS
 }

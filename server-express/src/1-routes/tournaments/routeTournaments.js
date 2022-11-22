@@ -6,9 +6,9 @@ const routerTournaments = () =>{
 
   const routerApi = express.Router();
   
-
-  routerApi.post('/new', TournamentController.createTournament)
-
+  routerApi.post('/new', TournamentController.createTournament) // PASO 2
+  routerApi.post('/createtournament', TournamentController.createTournamentStep1) // PASO 1
+  routerApi.get('/gettournaments', TournamentController.getTournamentsByAdmin)
 
   return routerApi;
 
