@@ -61,10 +61,28 @@ const getTorneoDB = async (username) =>{
     return data
 }
 
+const getTorneoJugadorDB = async (username) =>{
+    let data = await mongoConnectionNoSingleton.mongoConnection()
+    .then(() => {
+        let tournaments = torneoRegisterMongoaaS.find({ jugadores: username }); 
+        return tournaments
+    })
+    .catch(err=>{
+        console.log(err)
+        return {error: err}
+    })
+    .finally(() => {
+        mongoConnectionNoSingleton.mongoDisconnect().catch(err => { throw new Error('error al desconectar la base de datos') })
+    })
+
+    return data
+}
+
 
 
 module.exports= {
     createTorneoDB,
     createTorneoStep1DB,
-    getTorneoDB
+    getTorneoDB,
+    getTorneoJugadorDB
 }

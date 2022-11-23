@@ -8,7 +8,8 @@ const routerTournaments = () =>{
   
   routerApi.post('/new', TournamentController.createTournament) // PASO 2
   routerApi.post('/createtournament', TournamentController.createTournamentStep1) // PASO 1
-  routerApi.get('/gettournaments', TournamentController.getTournamentsByAdmin)
+  routerApi.get('/getadmintournaments', TournamentController.getTournamentsByAdmin)
+  routerApi.get('/getplayertournaments', TournamentController.getTournamentsByPlayer)
 
   return routerApi;
 

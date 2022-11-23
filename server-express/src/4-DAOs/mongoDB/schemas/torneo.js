@@ -30,7 +30,8 @@ const torneoRegisterSchema = new SchemaLocal({
     owner: {type: String},
     jugadores: {type: Array},
     liga: {type: String},
-    cerrado: {type: Boolean}
+    cerrado: {type: Boolean},
+    nombre: {type: String}
 });
 
 const torneoRegisterMongoaaS = mongoose.model('torneoregisters', torneoRegisterSchema)
