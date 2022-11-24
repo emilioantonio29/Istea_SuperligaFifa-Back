@@ -101,7 +101,7 @@ class TournamentController {
 
         const {name} = req.params
 
-        let data = await getTournamentsOpenService(req.headers.token, name);
+        let data = await getTournamentsOpenService(req.headers.token, name.toLowerCase());
 
         data.tournaments ? res.status(200).json(data) 
         : data.badRequest ? res.status(400).json(data)

@@ -39,7 +39,7 @@ const createTournamentStep1Service = async (torneoObject, token) =>{
                 jugadores: torneoObject.jugadores ? torneoObject.jugadores : [],
                 liga: torneoObject.liga,
                 cerrado: false,
-                nombre: torneoObject.nombre
+                nombre: torneoObject.nombre.toLowerCase()
             }
     
             let tournament = await createTorneoStep1DB(torneo);

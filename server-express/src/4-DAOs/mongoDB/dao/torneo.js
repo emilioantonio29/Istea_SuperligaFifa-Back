@@ -7,7 +7,6 @@ const mongoConnectionNoSingleton = require("../connection/mongoconnection");
 
 
 const createTorneoDB = async (torneoObject) =>{
-
     let data = await mongoConnectionNoSingleton.mongoConnection()
     .then(() => {
         let torneo = torneoMongoaaS.create(torneoObject);
@@ -26,7 +25,6 @@ const createTorneoDB = async (torneoObject) =>{
 }
 
 const createTorneoStep1DB = async (torneoObject)=>{
-    
     let data = await mongoConnectionNoSingleton.mongoConnection()
     .then(() => {
         let torneoStep1 = torneoRegisterMongoaaS.create(torneoObject);
