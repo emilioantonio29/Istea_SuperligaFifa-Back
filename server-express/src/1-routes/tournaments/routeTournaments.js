@@ -10,6 +10,7 @@ const routerTournaments = () =>{
   routerApi.post('/createtournament', TournamentController.createTournamentStep1) // PASO 1
   routerApi.get('/getadmintournaments', TournamentController.getTournamentsByAdmin)
   routerApi.get('/getplayertournaments', TournamentController.getTournamentsByPlayer)
+  routerApi.get('/getopentournaments/:name', TournamentController.getTournamentsOpen)
 
   return routerApi;
 

@@ -94,7 +94,6 @@ const getTournamentsByAdminService = async (token) =>{
 
     }
 
-
 }
 
 const getTournamentsByPlayerService = async (token) =>{
@@ -134,9 +133,50 @@ const getTournamentsByPlayerService = async (token) =>{
 
 }
 
+const getTournamentsOpenService = async (token, name) =>{
+
+    if(!token || !name){
+
+        return {badRequest: "Missing or wrong data"};
+
+    }
+    
+    let data = await validateUser(token)
+
+    if(data.user){
+
+        try {
+
+            let tournament = name == "all" ? 
+            
+                await getTorneoDB({ $and: [ { cerrado: { $eq: false } }, { torneoid: { $eq: "" } } ] })
+                :
+                await getTorneoDB({ nombre: name })
+
+            if(tournament.length == 0 || tournament[0]._id){
+                return {tournaments: tournament}
+            }else{
+                return {error: tournament}
+            }
+                
+        } catch (error) {
+
+            return {error: error}
+            
+        }
+
+    }else{
+
+        return {error: data}
+
+    }
+
+}
+
 
 module.exports = {
     createTournamentStep1Service,
     getTournamentsByAdminService,
-    getTournamentsByPlayerService
+    getTournamentsByPlayerService,
+    getTournamentsOpenService
 }
