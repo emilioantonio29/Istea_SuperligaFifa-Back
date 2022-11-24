@@ -34,11 +34,11 @@ const createTournamentStep1Service = async (torneoObject, token) =>{
             
             let torneo = {
                 cantidadjugadores: torneoObject.cantidadjugadores,
-                torneoid: null,
+                torneoid: "",
                 owner: data.user.user.username,
                 jugadores: torneoObject.jugadores ? torneoObject.jugadores : [],
                 liga: torneoObject.liga,
-                cerrado: null,
+                cerrado: false,
                 nombre: torneoObject.nombre
             }
     
@@ -74,7 +74,7 @@ const getTournamentsByAdminService = async (token) =>{
 
         try {
 
-            let tournament = await getTorneoDB({username: data.user.user.username});
+            let tournament = await getTorneoDB({owner: data.user.user.username});
 
             if(tournament.length == 0 || tournament[0]._id){
                 return {tournaments: tournament}
