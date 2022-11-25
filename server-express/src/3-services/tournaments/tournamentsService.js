@@ -1,6 +1,6 @@
 // LAYER 3: SERVICE (business layer) - USERS
 
-const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB} = require("../../4-DAOs/mongoDB/dao/torneo");
+const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB, updateTorneoJugadorDB} = require("../../4-DAOs/mongoDB/dao/torneo");
 const Encrypter = require("../encryption/encrypter");
 const {validateUser} = require("../users/serviceUsers")
 
@@ -173,10 +173,73 @@ const getTournamentsOpenService = async (token, name) =>{
 
 }
 
+const updateTournamentsPlayerService = async (token, id) =>{
+
+    if(!token || !id){
+
+        return {badRequest: "Missing or wrong data"};
+
+    }
+    
+    let data = await validateUser(token)
+
+    if(data.user){
+
+        try {
+
+            let tournament = await getTorneoDB({ _id: id });
+
+            if(tournament.length > 0){
+
+                if(tournament[0].jugadores.length < tournament[0].cantidadjugadores && tournament[0].cerrado == false && tournament[0].torneoid == ""){
+
+                    if(tournament[0].jugadores.indexOf(data.user.user.username) > -1){
+                        return {unauthorized: "Ya te encuentras inscripto en este torneo."}
+                    }else{
+                        let res = await updateTorneoJugadorDB(id, data.user.user.username)
+
+                        if(res.acknowledged){
+
+                            let tournaments = await getTorneoDB({ $and: [ { cerrado: { $eq: false } }, { torneoid: { $eq: "" } } ] })
+
+                            return {tournaments: tournaments}
+                            
+                        }else{
+
+                            return {error: res}
+
+                        }
+                    }
+
+
+                }else{
+                    return {unauthorized: "No hay cupos disponibles en el torneo."}
+                }
+
+            }else{
+                return {notFound: "no se encontraron torneos."}
+            }
+                
+        } catch (error) {
+
+            return {error: error}
+            
+        }
+
+    }else{
+
+        return {error: data}
+
+    }
+
+}
+
+
 
 module.exports = {
     createTournamentStep1Service,
     getTournamentsByAdminService,
     getTournamentsByPlayerService,
-    getTournamentsOpenService
+    getTournamentsOpenService,
+    updateTournamentsPlayerService
 }

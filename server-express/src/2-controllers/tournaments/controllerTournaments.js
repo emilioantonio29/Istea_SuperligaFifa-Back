@@ -2,7 +2,12 @@ const { json } = require("express");
 const axios = require("axios");
 const { FixtureCreator } = require("fixture-creator")
 const { createTorneoDB } = require("../../4-DAOs/mongoDB/dao/torneo");
-const { createTournamentStep1Service, getTournamentsByAdminService, getTournamentsByPlayerService, getTournamentsOpenService } = require("../../3-services/tournaments/tournamentsService")
+const {     createTournamentStep1Service, 
+            getTournamentsByAdminService, 
+            getTournamentsByPlayerService, 
+            getTournamentsOpenService,
+            updateTournamentsPlayerService
+        } = require("../../3-services/tournaments/tournamentsService")
 
 createTorneoDB
 const fixtureCreator = new FixtureCreator();
@@ -102,6 +107,20 @@ class TournamentController {
         const {name} = req.params
 
         let data = await getTournamentsOpenService(req.headers.token, name.toLowerCase());
+
+        data.tournaments ? res.status(200).json(data) 
+        : data.badRequest ? res.status(400).json(data)
+        : data.notValidated ? res.status(401).json(data)
+        : data.unauthorized ? res.status(403).json(data)
+        : data.notFound ? res.status(404).json(data) 
+        : data.error ? res.status(503).json(data) 
+        : res.status(500).json(data);
+
+    }
+
+    static updateTournamentPlayer = async (req, res) =>{
+
+        let data = await updateTournamentsPlayerService(req.headers.token, req.body.id);
 
         data.tournaments ? res.status(200).json(data) 
         : data.badRequest ? res.status(400).json(data)

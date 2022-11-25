@@ -6,6 +6,8 @@ const {mailRegister, mailRegisterConfirmation, mailPasswordRecovery, mailPasswor
 const {bcryptHash, bcryptCompare} = require("../bcrypt/bcrypt");
 const Encrypter = require("../encryption/encrypter");
 
+const sessionDuration = 60*600000 // 60*60000
+
 const validateUser = async (token) =>{
     try {
 
@@ -113,7 +115,7 @@ const getUserService = async (username, password) =>{
 
                 let encryptedSession = {
                     user: returnData,
-                    expired: new Date().getTime()+60*60000
+                    expired: new Date().getTime()+sessionDuration
                 }
 
                 let encryptedData = await encrypter.encrypt(JSON.stringify(encryptedSession));
@@ -199,7 +201,7 @@ const getUserBySessionService = async(token) =>{
 
                 let encryptedSession = {
                     user: returnData,
-                    expired: new Date().getTime()+60*60000
+                    expired: new Date().getTime()+sessionDuration
                 }
 
                 let encryptedData = await encrypter.encrypt(JSON.stringify(encryptedSession));
