@@ -95,11 +95,32 @@ const updateTorneoJugadorDB = async (id, username) =>{
     return data
 }
 
+const updateTorneoDB = async (id, object) =>{
+    let data = await mongoConnectionNoSingleton.mongoConnection()
+    .then(() => {
+        let tournaments = torneoRegisterMongoaaS.updateOne(                
+            { _id: id },
+            { $set: object }
+        ); 
+        return tournaments
+    })
+    .catch(err=>{
+        console.log(err)
+        return {error: err}
+    })
+    .finally(() => {
+        mongoConnectionNoSingleton.mongoDisconnect().catch(err => { throw new Error('error al desconectar la base de datos') })
+    })
+
+    return data
+}
+
 
 module.exports= {
     createTorneoDB,
     createTorneoStep1DB,
     getTorneoDB,
     getTorneoJugadorDB,
-    updateTorneoJugadorDB
+    updateTorneoJugadorDB,
+    updateTorneoDB
 }

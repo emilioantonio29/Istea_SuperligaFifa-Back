@@ -1,9 +1,11 @@
-// LAYER 3: SERVICE (business layer) - USERS
+// LAYER 3: SERVICE (business layer) - TOURNAMENTS
 
-const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB, updateTorneoJugadorDB} = require("../../4-DAOs/mongoDB/dao/torneo");
+const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB, updateTorneoJugadorDB, createTorneoDB, updateTorneoDB} = require("../../4-DAOs/mongoDB/dao/torneo");
 const Encrypter = require("../encryption/encrypter");
-const {validateUser} = require("../users/serviceUsers")
-
+const {validateUser} = require("../users/serviceUsers");
+const { FixtureCreator } = require("fixture-creator");
+const fixtureCreator = new FixtureCreator();
+const {getLeagueService} = require("../leagues/leaguesService")
 
 const createTournamentStep1Service = async (torneoObject, token) =>{
 
@@ -57,6 +59,104 @@ const createTournamentStep1Service = async (torneoObject, token) =>{
         return {error: data}
 
     }
+
+}
+
+const createTournamentStep2Service = async (token, id) =>{
+
+    // FALTA USAR MOMENT Y ASIGNAR CALENDARIO A LAS FECHAS
+    // METODO PARA GRABAR RESULTADOS
+    // METODO PARA DEVOLVER TABLA DE POSICIONES
+
+    try {
+
+        if(!token || !id){
+
+            return {badRequest: "Missing or wrong data"};
+    
+        }
+
+        let data = await validateUser(token)
+
+        if(data.user){
+
+            let tournament = await getTorneoDB({ _id: id });
+
+            if(tournament.length > 0){
+
+                if(tournament[0].jugadores.length == tournament[0].cantidadjugadores && tournament[0].cerrado == false && tournament[0].torneoid == "" && data.user.user.username == tournament[0].owner){
+
+                    let leagues = await getLeagueService(tournament[0].liga);
+                    let arrayLeagues = leagues.leagues.teams;
+
+                    let FinalPlayers = []
+
+                    tournament[0].jugadores.forEach((element, index) => {
+                        let result = arrayLeagues[Math.floor(Math.random()*arrayLeagues.length)];
+                        var indexResult = arrayLeagues.indexOf(result);
+                        arrayLeagues.splice(indexResult, 1);
+                        FinalPlayers.push(JSON.stringify({equipo: result, jugador: element, resultado: ""}));
+                    })
+
+                    console.log(FinalPlayers)
+
+                    let torneo = await fixtureCreator.createLeagueFixture(FinalPlayers, false)
+                
+                    let { weeks: fechas } = torneo
+                
+                    let fechasTorneo = []
+                
+                    fechas.forEach((element, index) => {
+                        let { matches: partidos } = element
+                        let tituloDeFecha = `Fecha ${index+1}`
+                
+                        let partidosTorneo = []
+                        partidos.forEach((element) => {
+                            let { home: local, away: visitante } = element
+                            // console.log(`\t${local} vs ${visitante}`)
+                            let partido = {
+                                local: local,
+                                visitante: visitante
+                            }
+                            partidosTorneo.push(partido)
+                        });
+                        let fecha = {
+                            partidos: partidosTorneo,
+                            titulo: tituloDeFecha
+                        }
+                        fechasTorneo.push(fecha)
+                
+                    });
+                
+                    let torneoNuevo = {
+                        fechas: fechasTorneo,
+                        name: tournament[0].nombre
+                    }
+
+                    let res = await createTorneoDB(torneoNuevo);
+
+                    console.log(res.fechas[0].partidos)
+
+                    await updateTorneoDB(id, {torneoid: res._id})
+
+                    return res   
+
+                }else{
+                    return {unauthorized: "El torneo ya se encuentra iniciado o no eres el administrdor del mismo."}
+                }
+
+            }else{
+                return {notFound: "no se encontraron torneos."}
+            }
+
+        }else{
+            return {error: data}
+        }
+
+    } catch (error) {
+        return {error: error};
+    }
+
 
 }
 
@@ -241,5 +341,6 @@ module.exports = {
     getTournamentsByAdminService,
     getTournamentsByPlayerService,
     getTournamentsOpenService,
-    updateTournamentsPlayerService
+    updateTournamentsPlayerService,
+    createTournamentStep2Service
 }
