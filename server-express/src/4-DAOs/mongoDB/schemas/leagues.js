@@ -9,7 +9,7 @@ const SchemaLocal = mongoose.Schema;
 */ 
 
 const ligasSchema = new SchemaLocal({
-    name: {type: String},
+    league: {type: String},
     teams: {type: Array}
 });
 

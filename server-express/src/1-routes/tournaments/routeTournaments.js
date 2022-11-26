@@ -12,6 +12,8 @@ const routerTournaments = () =>{
   routerApi.get('/getplayertournaments', TournamentController.getTournamentsByPlayer)
   routerApi.get('/getopentournaments/:name', TournamentController.getTournamentsOpen)
   routerApi.post('/updateplayeropentournaments', TournamentController.updateTournamentPlayer)
+  routerApi.post('/testleagues', TournamentController.testLeagues)
+  routerApi.post('/gettournamentdetail', TournamentController.tournamentDetail)
 
 
   return routerApi;

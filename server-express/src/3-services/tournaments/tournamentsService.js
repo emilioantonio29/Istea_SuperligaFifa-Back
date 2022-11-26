@@ -5,7 +5,9 @@ const Encrypter = require("../encryption/encrypter");
 const {validateUser} = require("../users/serviceUsers");
 const { FixtureCreator } = require("fixture-creator");
 const fixtureCreator = new FixtureCreator();
-const {getLeagueService} = require("../leagues/leaguesService")
+const {getLeagueService} = require("../leagues/leaguesService");
+const moment = require("moment");
+
 
 const createTournamentStep1Service = async (torneoObject, token) =>{
 
@@ -64,7 +66,7 @@ const createTournamentStep1Service = async (torneoObject, token) =>{
 
 const createTournamentStep2Service = async (token, id) =>{
 
-    // FALTA USAR MOMENT Y ASIGNAR CALENDARIO A LAS FECHAS
+    // FALTA USAR MOMENT Y ASIGNAR CALENDARIO A LAS FECHAS - DONE
     // METODO PARA GRABAR RESULTADOS
     // METODO PARA DEVOLVER TABLA DE POSICIONES
 
@@ -87,6 +89,9 @@ const createTournamentStep2Service = async (token, id) =>{
                 if(tournament[0].jugadores.length == tournament[0].cantidadjugadores && tournament[0].cerrado == false && tournament[0].torneoid == "" && data.user.user.username == tournament[0].owner){
 
                     let leagues = await getLeagueService(tournament[0].liga);
+
+                    console.log(leagues);
+
                     let arrayLeagues = leagues.leagues.teams;
 
                     let FinalPlayers = []
@@ -95,20 +100,26 @@ const createTournamentStep2Service = async (token, id) =>{
                         let result = arrayLeagues[Math.floor(Math.random()*arrayLeagues.length)];
                         var indexResult = arrayLeagues.indexOf(result);
                         arrayLeagues.splice(indexResult, 1);
-                        FinalPlayers.push(JSON.stringify({equipo: result, jugador: element, resultado: ""}));
+                        FinalPlayers.push(JSON.stringify({equipo: result, jugador: element, resultado: "", fullplayer: `${result} | ${element}`}));
                     })
 
                     console.log(FinalPlayers)
 
                     let torneo = await fixtureCreator.createLeagueFixture(FinalPlayers, false)
-                
                     let { weeks: fechas } = torneo
-                
                     let fechasTorneo = []
+
+                    let week = 0;
+                    let date = await moment(new Date()).add(7, 'days').format("DD/MM/YYYY")
                 
                     fechas.forEach((element, index) => {
+
+                        let date2 = moment(date).format("DD/MM/YYYY")
+
+                        let tituloDeFecha = `Fecha ${index+1} | ${moment(date2).add(week, 'days').format("DD/MM/YYYY")}`;
+                        week = week+7;
+
                         let { matches: partidos } = element
-                        let tituloDeFecha = `Fecha ${index+1}`
                 
                         let partidosTorneo = []
                         partidos.forEach((element) => {
@@ -157,6 +168,40 @@ const createTournamentStep2Service = async (token, id) =>{
         return {error: error};
     }
 
+
+}
+
+const createTournamentDetail = async (token, id) =>{
+
+    try {
+
+        if(!token || !id){
+
+            return {badRequest: "Missing or wrong data"};
+    
+        }
+
+        let data = await validateUser(token)
+
+        if(data.user){
+
+            let tournament = await getTorneoDB({ _id: id });
+
+            if(tournament.length > 0){
+
+                return tournament
+
+            }else{
+                return {notFound: "no se encontraron torneos."}
+            }
+
+        }else{
+            return {error: data}
+        }
+
+    } catch (error) {
+        return {error: error};
+    }
 
 }
 
@@ -342,5 +387,6 @@ module.exports = {
     getTournamentsByPlayerService,
     getTournamentsOpenService,
     updateTournamentsPlayerService,
-    createTournamentStep2Service
+    createTournamentStep2Service,
+    createTournamentDetail
 }

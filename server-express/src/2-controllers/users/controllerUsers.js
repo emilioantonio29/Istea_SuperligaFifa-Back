@@ -14,8 +14,15 @@ const moment = require("moment");
 
 class UserController{
 
-    static root = (req, res) =>{
-        res.status(200).json({welcome:`${moment(new Date()).format("DD/MM/YYYY")} - USER CONTROLLER`});      
+    static root = async (req, res) =>{
+
+        let date = await moment(new Date()).add(7, 'days').format("DD/MM/YYYY")
+
+        console.log(date)
+
+        let data2 = moment(date).format("DD/MM/YYYY")
+
+        res.status(200).json({welcome:`${moment(data2).add(7, 'days').format("DD/MM/YYYY")} - USER CONTROLLER`});      
     }
 
     static rootPost = (req, res) =>{
@@ -23,7 +30,7 @@ class UserController{
         console.log("================================================================")
         console.log(req.body)
 
-        res.status(200).json({welcome:`${moment(new Date()).format("DD/MM/YYYY")} - USER CONTROLLER`});      
+        res.status(200).json({welcome:`${moment(new Date(), "DD-MM-YYYY").add('days', 7)} - USER CONTROLLER`});      
     }
 
     static getUser = async (req, res) =>{
