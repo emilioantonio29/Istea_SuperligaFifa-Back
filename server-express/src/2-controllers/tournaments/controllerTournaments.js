@@ -8,7 +8,8 @@ const {     createTournamentStep1Service,
             getTournamentsOpenService,
             updateTournamentsPlayerService,
             createTournamentStep2Service,
-            createTournamentDetail
+            createTournamentDetail,
+            getFixtureService
         } = require("../../3-services/tournaments/tournamentsService")
 const {getLeagueService} = require("../../3-services/leagues/leaguesService")
 
@@ -110,6 +111,22 @@ class TournamentController {
         : data.notFound ? res.status(404).json(data) 
         : data.error ? res.status(503).json(data) 
         : res.status(500).json(data);
+    }
+
+    static getFixture = async (req, res) =>{
+
+        const {id} = req.params
+
+        let data = await getFixtureService(req.headers.token, id)
+
+        data.tournament ? res.status(200).json(data) 
+        : data.badRequest ? res.status(400).json(data)
+        : data.notValidated ? res.status(401).json(data)
+        : data.unauthorized ? res.status(403).json(data)
+        : data.notFound ? res.status(404).json(data) 
+        : data.error ? res.status(503).json(data) 
+        : res.status(500).json(data);
+
     }
 
 }

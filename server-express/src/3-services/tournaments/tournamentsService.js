@@ -1,6 +1,6 @@
 // LAYER 3: SERVICE (business layer) - TOURNAMENTS
 
-const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB, updateTorneoJugadorDB, createTorneoDB, updateTorneoDB} = require("../../4-DAOs/mongoDB/dao/torneo");
+const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB, updateTorneoJugadorDB, createTorneoDB, updateTorneoDB, getTorneoFixtureDB} = require("../../4-DAOs/mongoDB/dao/torneo");
 const Encrypter = require("../encryption/encrypter");
 const {validateUser} = require("../users/serviceUsers");
 const { FixtureCreator } = require("fixture-creator");
@@ -379,6 +379,38 @@ const updateTournamentsPlayerService = async (token, id) =>{
 
 }
 
+const getFixtureService = async (token, id) =>{
+
+    try {
+
+        if(!token || !id){
+
+            return {badRequest: "Missing or wrong data"};
+    
+        }
+
+        let data = await validateUser(token)
+
+        if(data.user){
+            
+            let tournament = await getTorneoFixtureDB({_id: id})
+    
+            if(tournament._id){
+    
+                return {tournament: tournament}
+    
+            }else{
+                return {notFound: "no se encontraron torneos."}
+            }
+
+        }else{
+            return {error: data}
+        }
+
+    } catch (error) {
+        return {error: error}
+    }
+}
 
 
 module.exports = {
@@ -388,5 +420,6 @@ module.exports = {
     getTournamentsOpenService,
     updateTournamentsPlayerService,
     createTournamentStep2Service,
-    createTournamentDetail
+    createTournamentDetail,
+    getFixtureService
 }

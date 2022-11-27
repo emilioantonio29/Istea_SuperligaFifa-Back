@@ -24,6 +24,24 @@ const createTorneoDB = async (torneoObject) =>{
     
 }
 
+const getTorneoFixtureDB = async (torneoObject) =>{
+    let data = await mongoConnectionNoSingleton.mongoConnection()
+    .then(() => {
+        let torneo = torneoMongoaaS.findOne(torneoObject);
+        return torneo
+    })
+    .catch(err=>{
+        console.log(err)
+        return {error: err}
+    })
+    .finally(() => {
+        mongoConnectionNoSingleton.mongoDisconnect().catch(err => { throw new Error('error al desconectar la base de datos') })
+    })
+
+    return data;
+    
+}
+
 const createTorneoStep1DB = async (torneoObject)=>{
     let data = await mongoConnectionNoSingleton.mongoConnection()
     .then(() => {
@@ -122,5 +140,6 @@ module.exports= {
     getTorneoDB,
     getTorneoJugadorDB,
     updateTorneoJugadorDB,
-    updateTorneoDB
+    updateTorneoDB,
+    getTorneoFixtureDB
 }
