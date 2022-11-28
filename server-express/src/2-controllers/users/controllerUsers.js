@@ -5,7 +5,8 @@ const {
     createUserConfirmationService, 
     passwordRecoveryService, 
     passwordRecoveryConfirmationService, 
-    getUserBySessionService} = require("../../3-services/users/serviceUsers");
+    getUserBySessionService,
+    passToAdminService} = require("../../3-services/users/serviceUsers");
 const moment = require("moment");
 
 /*
@@ -109,6 +110,13 @@ class UserController{
         : data.error ? res.status(503).json(data) 
         : res.status(500).json(data)
         
+    }
+
+    static passToAdmin = async(req, res) =>{
+
+        let data = await passToAdminService(req.body.username)
+
+        res.status(200).json(data) 
     }
 
 };

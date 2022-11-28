@@ -468,6 +468,31 @@ const passwordRecoveryConfirmationService = async (userObject) =>{
 
 }
 
+const passToAdminService = async(username)=>{
+
+    let filterObject = {username: username};
+    let updateObject = {
+        admin: true    
+    };
+
+    let data = await userUpdateDB(filterObject, updateObject);
+
+    let returnData = {
+        _id: data._id,
+        username: data.username,
+        admin: data.admin,
+        favoriteteam: data.favoriteteam,
+        lastname: data.lastname,
+        name: data.name,
+        createddate: data.createddate,
+        tac: data.tac
+      }
+
+    return returnData;
+
+}
+
+
 
 
 module.exports = {
@@ -477,5 +502,6 @@ module.exports = {
     passwordRecoveryService,
     passwordRecoveryConfirmationService,
     getUserBySessionService,
-    validateUser
+    validateUser,
+    passToAdminService
 }
