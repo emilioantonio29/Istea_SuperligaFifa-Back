@@ -10,7 +10,8 @@ const {     createTournamentStep1Service,
             createTournamentStep2Service,
             createTournamentDetail,
             getFixtureService,
-            updateFixtureService
+            updateFixtureService,
+            getTableService
         } = require("../../3-services/tournaments/tournamentsService")
 const {getLeagueService} = require("../../3-services/leagues/leaguesService")
 
@@ -133,6 +134,14 @@ class TournamentController {
     static test = async (req, res) =>{
 
         let data = await updateFixtureService(req.body.idFixture, req.body.idPartido, req.body.local, req.body.visitante)
+
+        res.status(200).json(data) 
+
+    }
+
+    static getTable = async (req, res) =>{
+
+        let data = await getTableService(req.body.idTorneo)
 
         res.status(200).json(data) 
 

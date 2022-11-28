@@ -29,6 +29,7 @@ const torneoRegisterSchema = new SchemaLocal({
     torneoid: {type: String},
     owner: {type: String},
     jugadores: {type: Array},
+    jugadoresfull: {type: Array},
     liga: {type: String},
     cerrado: {type: Boolean},
     nombre: {type: String}

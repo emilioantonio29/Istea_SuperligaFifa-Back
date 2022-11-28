@@ -7,6 +7,7 @@ const { FixtureCreator } = require("fixture-creator");
 const fixtureCreator = new FixtureCreator();
 const {getLeagueService} = require("../leagues/leaguesService");
 const moment = require("moment");
+const { off } = require("../../..");
 
 
 const createTournamentStep1Service = async (torneoObject, token) =>{
@@ -41,6 +42,7 @@ const createTournamentStep1Service = async (torneoObject, token) =>{
                 torneoid: "",
                 owner: data.user.user.username,
                 jugadores: torneoObject.jugadores ? torneoObject.jugadores : [],
+                jugadoresfull: [],
                 liga: torneoObject.liga,
                 cerrado: false,
                 nombre: torneoObject.nombre.toLowerCase()
@@ -67,7 +69,7 @@ const createTournamentStep1Service = async (torneoObject, token) =>{
 const createTournamentStep2Service = async (token, id) =>{
 
     // FALTA USAR MOMENT Y ASIGNAR CALENDARIO A LAS FECHAS - DONE
-    // METODO PARA GRABAR RESULTADOS
+    // METODO PARA GRABAR RESULTADOS - DONE
     // METODO PARA DEVOLVER TABLA DE POSICIONES
 
     try {
@@ -95,15 +97,15 @@ const createTournamentStep2Service = async (token, id) =>{
                     let arrayLeagues = leagues.leagues.teams;
 
                     let FinalPlayers = []
+                    let FinalPlayersTemplate = []
 
                     tournament[0].jugadores.forEach((element, index) => {
                         let result = arrayLeagues[Math.floor(Math.random()*arrayLeagues.length)];
                         var indexResult = arrayLeagues.indexOf(result);
                         arrayLeagues.splice(indexResult, 1);
                         FinalPlayers.push(JSON.stringify({equipo: result, jugador: element, resultado: "", fullplayer: `${result} | ${element}`}));
+                        FinalPlayersTemplate.push(`${result} | ${element}`);
                     })
-
-                    console.log(FinalPlayers)
 
                     let torneo = await fixtureCreator.createLeagueFixture(FinalPlayers, false)
                     let { weeks: fechas } = torneo
@@ -148,7 +150,7 @@ const createTournamentStep2Service = async (token, id) =>{
 
                     console.log(res.fechas[0].partidos)
 
-                    await updateTorneoDB(id, {torneoid: res._id})
+                    await updateTorneoDB(id, {torneoid: res._id, jugadoresfull: FinalPlayersTemplate})
 
                     return res   
 
@@ -459,6 +461,86 @@ const updateFixtureService = async (idFixture, id, local, visitante) =>{
 
 }
 
+const getTableService = async (idTorneo) =>{
+
+    let torneo = await getTorneoDB({_id: idTorneo})
+
+    let test = await getTorneoFixtureDB({_id: torneo[0].torneoid})
+
+    let tabla = []
+
+    for(let i = 0; i< torneo[0].jugadoresfull.length; i++){
+        let objeto = {
+            jugador: torneo[0].jugadoresfull[i],
+            jugados: 0,
+            ganados: 0,
+            empatados: 0,
+            perdidos: 0,
+            golesafavor: 0,
+            golesencontra: 0,
+            puntos: 0
+        }
+        tabla.push(objeto)
+    }
+
+    for (let i = 0; i < test.fechas.length; i++) {
+        // console.log("========================================", test.fechas[i].titulo)
+    
+          for(let j = 0; j < test.fechas[i].partidos.length; j++){
+            // console.log(test.fechas[i].partidos[j])
+
+            localObject = JSON.parse(test.fechas[i].partidos[j].local)
+            visitanteObject = JSON.parse(test.fechas[i].partidos[j].visitante)
+
+            // console.log("localObject", localObject)
+            // console.log("visitanteObject", visitanteObject)
+
+            tabla.forEach((e)=>{
+	
+                if(e.jugador == localObject.fullplayer){
+                    //alert("test")
+                    if(parseInt(localObject.resultado) >  parseInt(visitanteObject.resultado)){
+                        e.puntos = e.puntos+3
+                        e.ganados = e.ganados+1
+                    }else if(parseInt(localObject.resultado) <  parseInt(visitanteObject.resultado)){
+                        e.perdidos = e.perdidos+1
+                    }else{
+                        e.puntos = e.puntos+1
+                        e.empatados = e.empatados+1
+                    }
+
+                    e.jugados=e.jugados+1
+                    e.golesafavor=e.golesafavor+parseInt(localObject.resultado)
+                    e.golesencontra=e.golesencontra+parseInt(visitanteObject.resultado)
+                    
+                }
+                if(e.jugador == visitanteObject.fullplayer){
+                    
+                    if(parseInt(visitanteObject.resultado) >  parseInt(localObject.resultado)){
+                        e.puntos = e.puntos+3
+                        e.ganados = e.ganados+1
+                    }else if(parseInt(visitanteObject.resultado) <  parseInt(localObject.resultado)){
+                        e.perdidos = e.perdidos+1
+                    }else{
+                        e.puntos = e.puntos+1
+                        e.empatados = e.empatados+1
+                    }
+
+                    e.jugados=e.jugados+1
+                    e.golesafavor=e.golesafavor+parseInt(visitanteObject.resultado)
+                    e.golesencontra=e.golesencontra+parseInt(localObject.resultado)
+
+                }
+              
+            });
+        }
+          
+    }
+
+    return {tabla}
+
+}
+
 
 module.exports = {
     createTournamentStep1Service,
@@ -469,5 +551,6 @@ module.exports = {
     createTournamentStep2Service,
     createTournamentDetail,
     getFixtureService,
-    updateFixtureService
+    updateFixtureService,
+    getTableService
 }
