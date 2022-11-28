@@ -537,7 +537,9 @@ const getTableService = async (idTorneo) =>{
           
     }
 
-    return {tabla}
+    let sortTable = tabla.sort((a, b) => (a.puntos < b.puntos) ? 1 : -1) 
+
+    return {sortTable}
 
 }
 
