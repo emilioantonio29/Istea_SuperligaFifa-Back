@@ -42,6 +42,24 @@ const getTorneoFixtureDB = async (torneoObject) =>{
     
 }
 
+const getTorneoFixtureDB2 = async (torneoObject) =>{
+    let data = await mongoConnectionNoSingleton.mongoConnection()
+    .then(() => {
+        let torneo = torneoMongoaaS.findOne({ 'fechas.0.partidos._id': { $eq: '63780e21adfd245f79694f62' } });
+        return torneo
+    })
+    .catch(err=>{
+        console.log(err)
+        return {error: err}
+    })
+    .finally(() => {
+        mongoConnectionNoSingleton.mongoDisconnect().catch(err => { throw new Error('error al desconectar la base de datos') })
+    })
+
+    return data;
+    
+}
+
 const createTorneoStep1DB = async (torneoObject)=>{
     let data = await mongoConnectionNoSingleton.mongoConnection()
     .then(() => {
@@ -113,6 +131,7 @@ const updateTorneoJugadorDB = async (id, username) =>{
     return data
 }
 
+// ver
 const updateTorneoDB = async (id, object) =>{
     let data = await mongoConnectionNoSingleton.mongoConnection()
     .then(() => {
@@ -133,6 +152,25 @@ const updateTorneoDB = async (id, object) =>{
     return data
 }
 
+const updateFixturesDB = async (id, object) =>{
+    let data = await mongoConnectionNoSingleton.mongoConnection()
+    .then(() => {
+        let tournaments = torneoMongoaaS.updateOne(                
+            { _id: id },
+            { $set: object }
+        ); 
+        return tournaments
+    })
+    .catch(err=>{
+        console.log(err)
+        return {error: err}
+    })
+    .finally(() => {
+        mongoConnectionNoSingleton.mongoDisconnect().catch(err => { throw new Error('error al desconectar la base de datos') })
+    })
+
+    return data
+}
 
 module.exports= {
     createTorneoDB,
@@ -141,5 +179,7 @@ module.exports= {
     getTorneoJugadorDB,
     updateTorneoJugadorDB,
     updateTorneoDB,
-    getTorneoFixtureDB
+    getTorneoFixtureDB,
+    updateFixturesDB,
+    getTorneoFixtureDB2
 }

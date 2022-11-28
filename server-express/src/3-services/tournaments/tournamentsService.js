@@ -1,6 +1,6 @@
 // LAYER 3: SERVICE (business layer) - TOURNAMENTS
 
-const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB, updateTorneoJugadorDB, createTorneoDB, updateTorneoDB, getTorneoFixtureDB} = require("../../4-DAOs/mongoDB/dao/torneo");
+const {createTorneoStep1DB, getTorneoDB, getTorneoJugadorDB, updateTorneoJugadorDB, createTorneoDB, updateTorneoDB, getTorneoFixtureDB, updateFixturesDB, getTorneoFixtureDB2} = require("../../4-DAOs/mongoDB/dao/torneo");
 const Encrypter = require("../encryption/encrypter");
 const {validateUser} = require("../users/serviceUsers");
 const { FixtureCreator } = require("fixture-creator");
@@ -412,6 +412,53 @@ const getFixtureService = async (token, id) =>{
     }
 }
 
+const updateFixtureService = async (idFixture, id, local, visitante) =>{
+
+    /*let template = { 'fechas.0.partidos._id': { $eq: id } }
+    let templateString = JSON.stringify(template);
+    let templateToObjet = templateString.replace(/0/g, index)
+    let consulta = JSON.parse(templateToObjet);
+    let test = await getTorneoFixtureDB(consulta);*/
+
+    let test = await getTorneoFixtureDB({_id: idFixture})
+
+    // console.log(test)
+
+    if(test !== null){
+        for (let i = 0; i < test.fechas.length; i++) {
+            // console.log("========================================", test.fechas[i].titulo)
+        
+              for(let j = 0; j < test.fechas[i].partidos.length; j++){
+                // console.log(test.fechas[i].partidos[j])
+        
+                if(test.fechas[i].partidos[j]._id == id){
+
+                    localObject = JSON.parse(test.fechas[i].partidos[j].local)
+                    visitanteObject = JSON.parse(test.fechas[i].partidos[j].visitante)
+
+                    localObject.resultado = local
+                    visitanteObject.resultado = visitante
+
+                    test.fechas[i].partidos[j].local = JSON.stringify(localObject)
+                    test.fechas[i].partidos[j].visitante = JSON.stringify(visitanteObject)
+                    console.log("result ack")
+
+                }
+            }
+              
+        }
+    
+        let data = await updateFixturesDB(test._id, {fechas: test.fechas})
+    
+        // console.log(data)
+    
+        return test;
+    }else{
+        return {error: test}
+    }
+
+}
+
 
 module.exports = {
     createTournamentStep1Service,
@@ -421,5 +468,6 @@ module.exports = {
     updateTournamentsPlayerService,
     createTournamentStep2Service,
     createTournamentDetail,
-    getFixtureService
+    getFixtureService,
+    updateFixtureService
 }

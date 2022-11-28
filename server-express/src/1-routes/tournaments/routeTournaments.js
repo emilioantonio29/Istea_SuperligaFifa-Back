@@ -15,6 +15,7 @@ const routerTournaments = () =>{
   routerApi.post('/testleagues', TournamentController.testLeagues)
   routerApi.post('/gettournamentdetail', TournamentController.tournamentDetail)
   routerApi.get('/getfixture/:id', TournamentController.getFixture)
+  routerApi.post('/updatefixture', TournamentController.test)
 
   return routerApi;
 
