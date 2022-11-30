@@ -100,7 +100,7 @@ class PaymentController {
     }
 
     static getPaymentSuccess = (req, res) =>{
-        res.redirect(200, "https://superligafifa.herokuapp.com/");
+        res.redirect("https://superligafifa.herokuapp.com/");
     }
 
     static getPaymentError = (req, res) =>{
