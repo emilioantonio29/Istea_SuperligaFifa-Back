@@ -100,7 +100,7 @@ class PaymentController {
     }
 
     static getPaymentSuccess = (req, res) =>{
-        res.status(200).json({welcome: "PAGO EXITOSO - PAYMENT CONTROLLER"});      
+        res.redirect(200, "https://superligafifa.herokuapp.com/");
     }
 
     static getPaymentError = (req, res) =>{
