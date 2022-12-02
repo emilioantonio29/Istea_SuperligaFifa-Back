@@ -10,10 +10,10 @@ class PaymentController {
     }
 
     getMercadoPagoLink = async (req, res) => {
-        const { email } = req.body;
+        const { email, id } = req.body;
         try {
             const checkout = await this.paymentService.createPaymentMercadoPago(
-                email
+                email, id
             );
 
             return res.json(checkout.init_point);
@@ -65,16 +65,17 @@ class PaymentController {
                 //chequeo y confirmo si pago se realizó
                 const payment_found = await this.getPaymentConfirmation(payment_id)
 
-                // Acá se busca el usuario con el email asignado al pago y se actualiza el campo 'admin' a True
+                // Acá se busca el usuario con el id asignado al pago y se actualiza el campo 'admin' a True
                 if (payment_found.status == "approved" && payment_found.status_detail == "accredited"){
-    
+                    console.log("external reference User id: ", payment_found.external_reference)
+                    console.log("payment_found.payer.email: ", payment_found.payer.email)
                     // solo para demo ---ANTES del Usuario
-                    let user_before_payment = await getUserDB({username: payment_found.payer.email});
-                    console.log("el email de usuario buscado en nuestra BBDD: ", payment_found.payer.email)
+                    let user_before_payment = await getUserDB({_id: payment_found.external_reference});
+                                        
                     console.log("user_before_payment", user_before_payment)
                     console.log()
     
-                    let filterObject = {username: payment_found.payer.email};
+                    let filterObject = {_id: payment_found.external_reference};
                     let updateObject = {
                         admin: true
                     };
@@ -82,7 +83,7 @@ class PaymentController {
                     await userUpdateDB(filterObject, updateObject);
                     
                     // solo para demo ---DESPUES del Usuario
-                    let user_after_payment = await getUserDB({username: payment_found.payer.email});
+                    let user_after_payment = await getUserDB({_id: payment_found.external_reference});
                     console.log("user_after_payment", user_after_payment)
                     console.log()
                 }

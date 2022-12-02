@@ -11,10 +11,11 @@ class PaymentService {
         this.mercadoPagoUrl = "https://api.mercadopago.com/checkout";
     }
 
-    createPaymentMercadoPago = async (email) => {
+    createPaymentMercadoPago = async (email, id) => {
 
         const url = `${this.mercadoPagoUrl}/preferences?access_token=${this.tokensMercadoPago.test.access_token}`;
         console.log(email, "email de usuario pasado")
+        console.log("id del user: ", id)
         const items = [
             {
                 id: "1234",
@@ -30,7 +31,7 @@ class PaymentService {
 
         const preferences = {
             items,
-            external_reference: "admin-1",
+            external_reference: id,
             payer: {
                 name: "Rodolfo",
                 surname: "Arruabarrena",
