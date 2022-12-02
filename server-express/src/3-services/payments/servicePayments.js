@@ -59,9 +59,7 @@ class PaymentService {
             },
             // urls de redireccionamiento
             back_urls: {
-                success: `${process.env.BACKEND_URL}/payments/success`,
-                pending: `${process.env.BACKEND_URL}/payments/pending`,
-                failure: `${process.env.BACKEND_URL}/payments/error`
+                success: `${process.env.BACKEND_URL}/payments/success`
             },
             // url donde recibiremos las notificaciones/webhooks
             notification_url: `${process.env.BACKEND_URL}/payments/webhook`,

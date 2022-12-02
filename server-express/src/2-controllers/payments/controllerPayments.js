@@ -70,6 +70,7 @@ class PaymentController {
     
                     // solo para demo ---ANTES del Usuario
                     let user_before_payment = await getUserDB({username: payment_found.payer.email});
+                    console.log("el email de usuario buscado en nuestra BBDD: ", payment_found.payer.email)
                     console.log("user_before_payment", user_before_payment)
                     console.log()
     
