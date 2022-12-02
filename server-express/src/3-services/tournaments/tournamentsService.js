@@ -500,16 +500,31 @@ const getTableService = async (idTorneo) =>{
                     if(parseInt(localObject.resultado) >  parseInt(visitanteObject.resultado)){
                         e.puntos = e.puntos+3
                         e.ganados = e.ganados+1
+                        e.jugados=e.jugados+1
+                        e.golesafavor=e.golesafavor+parseInt(localObject.resultado)
+                        e.golesencontra=e.golesencontra+parseInt(visitanteObject.resultado)
+
                     }else if(parseInt(localObject.resultado) <  parseInt(visitanteObject.resultado)){
                         e.perdidos = e.perdidos+1
-                    }else{
+                        e.jugados=e.jugados+1
+                        e.golesafavor=e.golesafavor+parseInt(localObject.resultado)
+                        e.golesencontra=e.golesencontra+parseInt(visitanteObject.resultado)
+
+                    }else if(parseInt(localObject.resultado) ==  parseInt(visitanteObject.resultado)){
                         e.puntos = e.puntos+1
                         e.empatados = e.empatados+1
+                        e.jugados=e.jugados+1
+                        e.golesafavor=e.golesafavor+parseInt(localObject.resultado)
+                        e.golesencontra=e.golesencontra+parseInt(visitanteObject.resultado)
+
+                    }
+                    else{
+
                     }
 
-                    e.jugados=e.jugados+1
-                    e.golesafavor=e.golesafavor+parseInt(localObject.resultado)
-                    e.golesencontra=e.golesencontra+parseInt(visitanteObject.resultado)
+                    // e.jugados=e.jugados+1
+                    // e.golesafavor=e.golesafavor+parseInt(localObject.resultado)
+                    // e.golesencontra=e.golesencontra+parseInt(visitanteObject.resultado)
                     
                 }
                 if(e.jugador == visitanteObject.fullplayer){
@@ -517,16 +532,30 @@ const getTableService = async (idTorneo) =>{
                     if(parseInt(visitanteObject.resultado) >  parseInt(localObject.resultado)){
                         e.puntos = e.puntos+3
                         e.ganados = e.ganados+1
+                        e.jugados=e.jugados+1
+                        e.golesafavor=e.golesafavor+parseInt(visitanteObject.resultado)
+                        e.golesencontra=e.golesencontra+parseInt(localObject.resultado)
+
                     }else if(parseInt(visitanteObject.resultado) <  parseInt(localObject.resultado)){
                         e.perdidos = e.perdidos+1
-                    }else{
+                        e.jugados=e.jugados+1
+                        e.golesafavor=e.golesafavor+parseInt(visitanteObject.resultado)
+                        e.golesencontra=e.golesencontra+parseInt(localObject.resultado)
+
+                    }else if(parseInt(visitanteObject.resultado) ==  parseInt(localObject.resultado)){
                         e.puntos = e.puntos+1
                         e.empatados = e.empatados+1
+                        e.jugados=e.jugados+1
+                        e.golesafavor=e.golesafavor+parseInt(visitanteObject.resultado)
+                        e.golesencontra=e.golesencontra+parseInt(localObject.resultado)
+
+                    }
+                    else{
                     }
 
-                    e.jugados=e.jugados+1
-                    e.golesafavor=e.golesafavor+parseInt(visitanteObject.resultado)
-                    e.golesencontra=e.golesencontra+parseInt(localObject.resultado)
+                    // e.jugados=e.jugados+1
+                    // e.golesafavor=e.golesafavor+parseInt(visitanteObject.resultado)
+                    // e.golesencontra=e.golesencontra+parseInt(localObject.resultado)
 
                 }
               
