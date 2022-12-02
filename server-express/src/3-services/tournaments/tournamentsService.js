@@ -7,8 +7,6 @@ const { FixtureCreator } = require("fixture-creator");
 const fixtureCreator = new FixtureCreator();
 const {getLeagueService} = require("../leagues/leaguesService");
 const moment = require("moment");
-const { off } = require("../../..");
-
 
 const createTournamentStep1Service = async (torneoObject, token) =>{
 
