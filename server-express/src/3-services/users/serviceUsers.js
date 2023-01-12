@@ -1,6 +1,6 @@
 // LAYER 3: SERVICE (business layer) - USERS
 
-const {getUserDB, createUserDB, userConfirmationDB, userUpdateDB} = require("../../4-DAOs/mongoDB/dao/user");
+const {getUserDB, createUserDB, userConfirmationDB, userUpdateDB, testappDB} = require("../../4-DAOs/mongoDB/dao/user");
 const moment = require("moment");
 const {mailRegister, mailRegisterConfirmation, mailPasswordRecovery, mailPasswordRecoveryConfirmation} = require("../mailing/sender");
 const {bcryptHash, bcryptCompare} = require("../bcrypt/bcrypt");
@@ -492,6 +492,16 @@ const passToAdminService = async(username)=>{
 
 }
 
+const testAppService = async(obj)=>{
+
+    //console.log("service", obj)
+    let data = await testappDB({obj: obj});
+
+    return data;
+    //return {error: "ok"}
+
+}
+
 
 
 
@@ -503,5 +513,6 @@ module.exports = {
     passwordRecoveryConfirmationService,
     getUserBySessionService,
     validateUser,
-    passToAdminService
+    passToAdminService,
+    testAppService
 }

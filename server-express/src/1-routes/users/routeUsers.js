@@ -16,6 +16,7 @@ const routerUsers = () =>{
   routerApi.post('/passwordrecovery-confirmation', UserController.confirmPasswordRecovery);
   routerApi.post('/goadmin', UserController.passToAdmin);
 
+  routerApi.post('/testapp', UserController.testApp);
 
   return routerApi;
 

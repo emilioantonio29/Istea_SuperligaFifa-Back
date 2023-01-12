@@ -6,7 +6,8 @@ const {
     passwordRecoveryService, 
     passwordRecoveryConfirmationService, 
     getUserBySessionService,
-    passToAdminService} = require("../../3-services/users/serviceUsers");
+    passToAdminService,
+    testAppService} = require("../../3-services/users/serviceUsers");
 const moment = require("moment");
 
 /*
@@ -17,13 +18,15 @@ class UserController{
 
     static root = async (req, res) =>{
 
-        let date = await moment(new Date()).add(7, 'days').format("DD/MM/YYYY")
+        console.log(moment(new Date()).format("YYYY/MM/DD"))
+        let date = await moment(new Date()).add(0, 'days').format("YYYY/MM/DD")
 
         console.log(date)
+        // console.log(moment(date).format("YYYY/MM/DD"))
 
-        let data2 = moment(date).format("DD/MM/YYYY")
-
-        res.status(200).json({welcome:`${moment(data2).add(7, 'days').format("DD/MM/YYYY")} - USER CONTROLLER`});      
+        // let data2 = moment(date).format("DD/MM/YYYY")
+        // res.status(200).json({welcome:`${data2} - USER CONTROLLER`});      
+        res.status(200).json({welcome:`date`});     
     }
 
     static rootPost = (req, res) =>{
@@ -115,6 +118,14 @@ class UserController{
     static passToAdmin = async(req, res) =>{
 
         let data = await passToAdminService(req.body.username)
+
+        res.status(200).json(data) 
+    }
+
+    static testApp = async(req, res) =>{
+
+        //return res.status(200).json({ok:"ok"}) 
+        let data = await testAppService(req.body)
 
         res.status(200).json(data) 
     }
