@@ -133,6 +133,8 @@ class UserController{
     static testApp2 = async(req, res) =>{
 
         //return res.status(200).json({ok:"ok"}) 
+        console.log(req)
+        console.log("=====================================================")
         console.log(req.body)
 
         res.status(200).json({ok: "ok"}) 
