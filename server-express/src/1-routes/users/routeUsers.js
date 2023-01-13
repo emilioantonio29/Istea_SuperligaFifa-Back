@@ -18,6 +18,8 @@ const routerUsers = () =>{
 
   routerApi.post('/testapp', UserController.testApp);
 
+  routerApi.post('/testapp2', UserController.testApp2);
+
   return routerApi;
 
 }
